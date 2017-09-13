@@ -5,8 +5,9 @@ Visualization of complex Medical Imaging data such as functional connectivity, t
 Many different visualization solutions have been proposed. Margulies et al (2013) and Rojas et al (2011; 2013), for example, describe 2D as well as 3D neuroimaging visualization methods for tractography and functional connectivity data.
 
 ## Aplications
-## 3D Medical Imaging Report
-This sortware allow the user to Download one project into XNAT platform of BIMCV and convert the XNAT directory images in a directory MIDS. The aplication execution need Python --version >= 3.5. 
+
+### 3D Medical Imaging Report
+This sortware allow the user to  
 
 ## References
 [1] Margulies, D.S., Böttger, J., Watanabe A., Gorgolewski, K.J., (2013). 'Visualizing the human connectome',NeuroImage 80 (2013): 445-461.
