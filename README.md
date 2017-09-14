@@ -10,7 +10,7 @@ Many different visualization solutions have been proposed. Margulies et al (2013
 We introduce a new concept of visualization in Medical Imaging biomarkers field through web and smartphones with this prototype.
 
 ## References
-[1] Margulies, D.S., Böttger, J., Watanabe A., Gorgolewski, K.J., (2013).'Visualizing the human connectome',NeuroImage 80 (2013): 445-461.
+[1] Margulies, D.S., Böttger, J., Watanabe A., Gorgolewski, K.J., (2013).'Visualizing the human connectome' ,NeuroImage 80 (2013): 445-461.
 
 [2] Rojas, G.M., Gálvez, M., Cordovez, J., Margulies, D.S., Castellanos, F.X., Milham, M.P., (2011). 'Applications of Stereoscopic 3D in Morphometric and Functional Imaging', HBM 2011, Quebec City, Canada.
 
