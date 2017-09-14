@@ -1,13 +1,13 @@
 # 3D-MI-Reports
 
-Visualization of complex Medical Imaging data such as functional connectivity, tractography, functional imaging and Multiparametric Tissue Signatures is a challenge. Recombining such data produces an even more complex problem.
+Visualization of complex Medical Imaging data such as functional connectivity, tractography, functional imaging and Multiparametric Tissue Signatures is a challenge. Recombining such data produces an even more complex problem concerning ot medical interpretations.
 
 Many different visualization solutions have been proposed. Margulies et al (2013) and Rojas et al (2011; 2013), for example, describe 2D as well as 3D neuroimaging visualization methods for tractography and functional connectivity data.
 
 ## Aplications
 
 ### 3D Medical Imaging Report
-This sortware allow the user to  
+We introduce a new concept of visualization in Medical Imaging biomarkers field through web and smartphones with this prototype.
 
 ## References
 [1] Margulies, D.S., Böttger, J., Watanabe A., Gorgolewski, K.J., (2013). 'Visualizing the human connectome',NeuroImage 80 (2013): 445-461.
