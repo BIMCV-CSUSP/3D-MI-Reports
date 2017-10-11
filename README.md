@@ -8,6 +8,7 @@ Many different visualization solutions have been proposed. Margulies et al (2013
 
 ### 3D Medical Imaging Report
 We introduce a new concept of visualization in Medical Imaging biomarkers field through web and smartphones with this prototype.
+
 [ ![QR-Brain-Edema](https://raw.githubusercontent.com/BIMCV-CSUSP/3D-MI-Reports/master/generate.png)](https://bimcv-csusp.github.io/3D-MI-Reports/)
 
 ## References
