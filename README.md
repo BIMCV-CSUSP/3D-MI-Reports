@@ -5,6 +5,7 @@ Visualization of complex Medical Imaging data such as functional connectivity, t
 Many different visualization solutions have been proposed. Margulies et al (2013) [1] and Rojas et al (2011; 2013) [2-3], for example, describe 2D as well as 3D neuroimaging visualization methods for tractography and functional connectivity data.
 
 ## Aplications
+[ ![QR-Brain-Edema](https://raw.githubusercontent.com/BIMCV-CSUSP/3D-MI-Reports/master/generate.png)](https://bimcv-csusp.github.io/3D-MI-Reports/)
 
 ### 3D Medical Imaging Report
 We introduce a new concept of visualization in Medical Imaging biomarkers field through web and smartphones with this prototype.
