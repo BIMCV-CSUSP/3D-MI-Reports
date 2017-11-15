@@ -1,0 +1,153 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>A very simple D3 map</title>
+    <script src="lib/d3.v4.min.js"></script>
+    <script src="map.js"></script>
+
+
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+        background: whitesmoke;
+    }
+    h1 {
+        position: absolute;
+        left: 20px;
+        top: 10px;
+        font-size: 2em;
+        font-weight: 100;
+        color: #005DAA; /* offical UK Kentucky blue */
+    }
+    .county {
+      stroke: #fff;
+      fill:#005DAA;
+    }
+
+    path.dep{
+         fill:#FF9900;
+         stroke:blue;
+         stroke-width:1;
+
+    }
+
+    path.dep:hover{
+        fill:#FFBB88;
+
+    }
+
+
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+
+        padding: 2px;
+        font: 12px sans-serif;
+        background: lightsteelblue;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
+</style>
+</head>
+<body>
+  <script>
+
+    var width = 300,//window.innerWidth,
+        height = window.innerHeight;
+
+    /*var projection = d3.geo.albers()
+        .center([0, 37.8])
+        .rotate([85.8,0])
+        .scale(8000)
+        .translate([width / 2, height / 2]);
+    var geoPath = d3.geo.path();
+        //.projection(projection);
+
+    svg.append("g")
+        .selectAll("path")
+        .data(counties.features)
+        .enter()
+        .append("path")
+        //.attr( "d", geoPath )
+        .attr("class","county");
+        */
+
+
+    //const max_x = d3.max(dep, function(d){return d3.max(d.geometry,function(d){ return d[0] }) });
+    /*max_x=345;
+    console.log(max_x);
+    //const max_y = d3.max(dep, function(d){ return d3.max(d.geometry,function(d){ return d[1] }) });
+    max_y=570;
+    console.log(max_y);
+    console.log(max_y/max_x);
+    */
+    /*dep.forEach(function(element){
+        var text = element.NAME + "[";
+        element.geometry.forEach(function(v){
+            v[0]=v[0]/max_x;
+            v[1]=v[1]/max_y;
+            text += "["+ v[0]+","+ v[1]+"],";
+        });
+        text = text.substring(0, text.length - 1);
+        text += "]\n\n";
+
+        console.log(text);
+        //console.log(element.geometry[0]);
+    });*/
+
+
+    var scale_x = d3.scaleLinear()
+                  .domain([0,1])
+                  .range([0,width]);
+    var scale_y = d3.scaleLinear()
+                    .domain([0,1])
+                    .range([0,width * map.proportion]);
+    //const max_y = d3.max(dep, function(d){ return d3.max(d.geometry,function(d){ return scale(d[1]) }) });
+
+
+    var lineFunction = d3.line()
+                         //.curve(d3.curveBasis)
+                         .x(function(d) { return scale_x(+d[0]); })
+                         .y(function(d) { return scale_y(+d[1]); });
+
+
+    //The SVG Container
+    var svgContainer = d3.select("body").append("svg")
+                                        //.data(dep)
+                                        .attr("width", width)
+                                        .attr("height", width * map.proportion);
+
+   var div = d3.select("body").append("div")
+                              .attr("class", "tooltip")
+                              .style("opacity", 0);
+
+    var lineGraph = svgContainer.selectAll("path")
+                                .data(map.departments)
+                            .enter().append("path")
+                                //.data(element)
+                                .attr("d", function(d){return lineFunction(d.geometry)+'Z' })
+                                .attr("class", "dep")
+                                //.attr("stroke", "blue")
+                                //.attr("stroke-width", 1)
+                                //.attr("fill", "#FF9900")
+                                .on("mouseover", function(d) {
+                                    div.transition()
+                                       .duration(200)
+                                       .style("opacity", .9);
+                                    div.html(d.NAME)
+                                       .style("left", (d3.event.pageX) + "px")
+                                       .style("top", (d3.event.pageY - 28) + "px");
+                                    })
+                                .on("mouseout", function(d) {
+                                    div.transition()
+                                        .duration(500)
+                                        .style("opacity", 0);
+                                });
+
+
+
+  </script>
+</body>
+</html>

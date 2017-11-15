@@ -1,0 +1,139 @@
+
+text{
+    font-family: Arial, sans-serif;
+    fill: #828282;
+}
+
+path.domain{
+    fill:none;
+
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+div{
+
+}
+
+img.center{
+    display: block;
+    margin: 0 auto;
+    padding-top: 10px;
+}
+
+#brain_img{
+    height: 20%;
+}
+
+input[type=radio] {
+  position: absolute;
+  visibility: hidden;
+  display: none;
+}
+
+label {
+  color: #76797A;
+  display: inline-block;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+input[type=radio]:checked + label{
+  color: #d9d7da;
+  background: #656869;
+}
+
+label + input[type=radio] + label {
+  border-left: solid 3px #656869;
+}
+
+#radio_buttons{
+    border: solid 3px #656869;
+    display: inline-block;
+    border-radius: 10px;
+
+}
+#radio_form{
+    text-align: center;
+    width: 100%;
+    height: 10%;
+
+}
+
+#map{
+    height: 60%;
+}
+
+#download_button{
+    height: 10%;
+}
+
+#charts{
+    float:left;
+    #background-color: blue;
+    height: 100%;
+    width: 50%;
+}
+
+#select_area{
+    #background-color: yellow;
+    height: 100%;
+    width: 30%;
+    float: left;
+}
+
+#gender{
+    #background-color: white;
+    height: 50%;
+    width: 100%;
+
+}
+
+#ages{
+    #background-color: darkorange;
+    height: 50%;
+    width: 100%;
+}
+
+#map_select_area{
+    float:left;
+    #background-color: red;
+    height: 100%;
+    width: 20%;
+    pdding: 3px;
+}
+
+#modality{
+    float:left;
+    #background-color: brown;
+    height: 50%;
+    width: 60%;
+}
+
+svg{
+    display: block;
+}
+
+
+g.deselected path{
+    fill: gray;
+    fill-opacity: 0.5;
+}
+
+g.deselected rect{
+    fill: gray;
+    fill-opacity: 0.5;
+}
+
+g.hoverable path:hover {
+    fill-opacity: 0.7;
+}
+
+g.hoverable rect:hover {
+    fill-opacity: 0.7;
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="lib/d3.v4.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="index.css">
+
+</head>
+<body>
+    <div id="map_select_area">
+    <div id="brain_img">
+        <img class="center" src="brain.png" height="80%" />
+    </div>
+    <div id=radio_form>
+        <div id="radio_buttons">
+            <input type="radio" value="area" id="area" name="selector" checked><label for="area">Area</label><input type="radio" value="volume" id="volume" name="selector"><label for="volume">Volume</label><input type="radio" value="thickness" id="thickness" name="selector"><label for="thickness">Thickness</label>
+        </div>
+    </div>
+    <div id="map">
+    </div>
+
+        <div id="download_button">
+
+        </div>
+
+    </div>
+    <div id="charts">
+
+    </div>
+    <div id="select_area">
+        <div id="gender">
+        </div>
+        <div id="ages">
+        </div>
+
+        <!--div id="modality">
+            select
+        </div>-->
+        <script src="map.js"></script>
+        <script src="donut.js"></script>
+        <script src="ages_histogram.js"></script>
+        <script src="part_histogram.js"></script>
+
+        <script src="script.js"></script>
+
+
+    </div>
+</body>
