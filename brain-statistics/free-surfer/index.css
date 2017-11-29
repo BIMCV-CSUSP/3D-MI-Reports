@@ -44,18 +44,14 @@ label {
 }
 
 input[type=radio]:checked + label{
-  color: #d9d7da;
-  background: #656869;
+    border-bottom:solid 3px #478fa7;
 }
 
 label + input[type=radio] + label {
-  border-left: solid 3px #656869;
 }
 
 #radio_buttons{
-    border: solid 3px #656869;
     display: inline-block;
-    border-radius: 10px;
 
 }
 #radio_form{
