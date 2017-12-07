@@ -19,7 +19,7 @@ ages_hist.set_on_change(function(values){
 });
 
 var part_histogram = new PartHistogram("#charts");
-create_map("#map");
+var map = create_map("#map");
 
 
 
@@ -117,7 +117,7 @@ function update_graph(option){
             })
             .sortKeys(d3.ascending)
             .entries(file.filter(function(v){
-                if(selections.ages==null || (selections.ages[0]<=v["Age"] && selections.ages[1]>=v["Age"]))
+                if(selections.ages==null || (selections.ages[0]<=v["Age"] && selections.ages[1]>=v["Age"] | selected_regions.indexOf(v[department])>-1 ))
                     return v;
             }));
 
