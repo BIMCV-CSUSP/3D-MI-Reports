@@ -67,13 +67,14 @@ function fill_graph(option){
         columns.forEach(function(column) {
             averages.push({
                 key: column,
-                value_lh: d3.mean(file, function(d) { return +d[""+column+" "+option]; }),
-                value_rh: d3.mean(file, function(d) { return +d[""+column+" "+option]; }),
-                max_lh: d3.max(file, function(d) { return +d[""+column+" "+option]; }),
-                max_rh: d3.max(file, function(d) { return +d[""+column+" "+option]; }),
-                min_lh: d3.min(file, function(d) { return +d[""+column+" "+option]; }),
-                min_rh: d3.min(file, function(d) { return +d[""+column+" "+option]; }),
+                value_lh: d3.mean(file, function(d) { return +d[""+column+" left "+option]; }),
+                value_rh: d3.mean(file, function(d) { return +d[""+column+" right "+option]; }),
+                max_lh: d3.max(file, function(d) { return +d[""+column+" left "+option]; }),
+                max_rh: d3.max(file, function(d) { return +d[""+column+" right "+option]; }),
+                min_lh: d3.min(file, function(d) { return +d[""+column+" left "+option]; }),
+                min_rh: d3.min(file, function(d) { return +d[""+column+" right "+option]; }),
             });
+            console.log(""+column+" "+option)
 
         });
         console.log(averages);
@@ -144,12 +145,12 @@ function update_graph(option){
         columns.forEach(function(column) {
             averages.push({
                 key: column,
-                value_lh: d3.mean(file, function(d) { return +d[column+" "+option]; }),
-                value_rh: d3.mean(file, function(d) { return +d[column+" "+option]; }),
-                max_lh: d3.max(file, function(d) { return +d[column+" "+option]; }),
-                max_rh: d3.max(file, function(d) { return +d[column+" "+option]; }),
-                min_lh: d3.min(file, function(d) { return +d[column+" "+option]; }),
-                min_rh: d3.min(file, function(d) { return +d[column+" "+option]; }),
+                value_lh: d3.mean(file, function(d) { return +d[""+column+" left "+option]; }),
+                value_rh: d3.mean(file, function(d) { return +d[""+column+" right "+option]; }),
+                max_lh: d3.max(file, function(d) { return +d[""+column+" left "+option]; }),
+                max_rh: d3.max(file, function(d) { return +d[""+column+" right "+option]; }),
+                min_lh: d3.min(file, function(d) { return +d[""+column+" left "+option]; }),
+                min_rh: d3.min(file, function(d) { return +d[""+column+" right "+option]; }),
             });
 
         });
