@@ -11,7 +11,7 @@ function Donut(div){
     //var color = d3.scaleOrdinal()
     //    .range(["#8888FF", "#FF8888", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
-    var color = {M:"#8888DD", F:"#F590E5", MO:"#AAAAFF", FO:"#F6A1F6"};
+    var color = {M:"#8888DD", F:"#F590E5", MO:"#AAAAFF", FO:"#F6A1F6", Male:"#8888DD", Female:"#F590E5", UNKNOWN:"#8822DD"};
 
     var arc = d3.arc()
         .cornerRadius(5)
@@ -36,7 +36,7 @@ function Donut(div){
     svg = svg.append("g")
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-    var format = d3.format(".2%")
+    var format = d3.format(".2%");
 
     var selected = [false,false];
     var keys;
@@ -45,20 +45,20 @@ function Donut(div){
 
     this.set_on_change = function(f){
         on_change = f;
-    }
+    };
 
     this.fill = function(data){
         //selected = data.map(function(v){return false;});
-        keys = data.map(function(d){return d.key});
+        keys = data.map(function(d){return d.key;});
         var g = svg.selectAll(".arc")
-              .data(pie(data),function(d){return d.data.key})
+              .data(pie(data),function(d){return d.data.key;})
             .enter().append("g")
               .attr("class", "arc hoverable")
               .on("click",function(d,i){
                   if(selected[i]==false){
                       svg.selectAll(".arc").attr("class",function(d,j){
                           if(i==j) return "arc hoverable";
-                          else return "arc hoverable deselected"
+                          else return "arc hoverable deselected";
                       });
                       selected[i]=true;
                       selected[1-i]=false;
@@ -76,7 +76,7 @@ function Donut(div){
             .attr("fill", function(d) { return color[d.data.key]; });
 
         g.append("title")
-            .text(function(d){return d.data.key + ": " + format((d.endAngle - d.startAngle)/(2*Math.PI)) });
+            .text(function(d){return d.data.key + ": " + format((d.endAngle - d.startAngle)/(2*Math.PI)); });
 
         /*g.append("text")
             .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
@@ -84,13 +84,13 @@ function Donut(div){
             .text(function(d) { return d.data.key; });
             */
 
-        const legendRectSize=15;
+        var legendRectSize=15;
 
-        const legendSpacing=7;
-        const legendHeight=legendRectSize+legendSpacing;
+        var legendSpacing=7;
+        var legendHeight=legendRectSize+legendSpacing;
 
         var legend=svg.selectAll('.legend')
-            .data(data,function(d){return d.key})
+            .data(data,function(d){return d.key;})
             .enter().append('g')
             .attr("class","legend")
             .attr("transform",function(d,i){ return 'translate(-20,' + ((i*legendHeight)-20) + ')';});
@@ -110,29 +110,29 @@ function Donut(div){
             .text(function(d){return d.key;})
             .style("fill","black")
             .style("font-size","12px");
-    }
+    };
 
     this.update = function(data){
 
         var g = svg.selectAll(".arc")
-            .data(pie(data),function(d){return d.data.key});
+            .data(pie(data),function(d){return d.data.key;});
 
         svg.selectAll("path")
-            .data(pie(data),function(d){return d.data.key})
+            .data(pie(data),function(d){return d.data.key;})
             .transition()
             .attrTween("d", arcTween);
 
         svg.selectAll("title")
-            .data(pie(data),function(d){return d.data.key})
-            .text(function(d){return d.data.key + ": " + format((d.endAngle - d.startAngle)/(2*Math.PI)) });
+            .data(pie(data),function(d){return d.data.key;})
+            .text(function(d){return d.data.key + ": " + format((d.endAngle - d.startAngle)/(2*Math.PI)) ;});
 
 
-    }
+    };
 
     function updated(){
         if(on_change==null) return;
 
-        var result = []
+        var result = [];
 
         selected.forEach(function(v,i){
             if(v) result.push(keys[i]);

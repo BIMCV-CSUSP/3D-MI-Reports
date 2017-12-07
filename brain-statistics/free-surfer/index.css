@@ -12,6 +12,8 @@ path.domain{
 html, body {
     height: 100%;
     margin: 0;
+    font-family: Arial, sans-serif;
+
 }
 
 div{
@@ -107,7 +109,7 @@ label + input[type=radio] + label {
 #modality{
     float:left;
     #background-color: brown;
-    height: 50%;
+        height: 50%;
     width: 60%;
 }
 

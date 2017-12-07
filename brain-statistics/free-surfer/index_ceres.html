@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Free surfer statistic visualizations</title>
+    <title>CERES statistics visualization</title>
     <script src="lib/d3.v4.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="index.css">
@@ -15,7 +15,7 @@
     </div>
     <div id="radio_form">
         <div id="radio_buttons">
-            <input type="radio" value="area" id="area" name="selector" checked><label for="area">Area</label><input type="radio" value="volume" id="volume" name="selector"><label for="volume">Volume</label><input type="radio" value="thickness" id="thickness" name="selector"><label for="thickness">Thickness</label>
+            <input type="radio" value="cm3" id="area" name="selector" checked><label for="area">Volume</label><input type="radio" value="grey matter cm3" id="volume" name="selector"><label for="volume">Grey matter vol.</label><input type="radio" value="cortical thickness" id="thickness" name="selector"><label for="thickness">Cortical thickness</label>
         </div>
     </div>
     <div id="map">
@@ -26,7 +26,7 @@
         </div>
 
     </div>
-    <div id="charts">
+    <div id="charts"  style="height: 40%;">
 
     </div>
     <div id="select_area">
@@ -43,7 +43,7 @@
         <script src="ages_histogram.js"></script>
         <script src="part_histogram.js"></script>
 
-        <script src="script.js"></script>
+        <script src="script_ceres.js"></script>
 
 
     </div>

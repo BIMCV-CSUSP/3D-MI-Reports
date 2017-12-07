@@ -18,7 +18,7 @@ function Ages(div){
 
     var svg = area.append("svg")
         .attr("width", "100%")
-        .attr("height", "100%")
+        .attr("height", "100%");
 
     svg.append("text")
         .attr("x",width / 2)
@@ -46,11 +46,11 @@ function Ages(div){
 
     this.set_on_change = function(f){
         on_change = f;
-    }
+    };
 
     this.fill = function(data){
 
-        const [min, max] = d3.extent(data);
+        var [min, max] = d3.extent(data);
 
         x = d3.scaleLinear()
             .rangeRound([margin.left, width-margin.right])
@@ -64,9 +64,9 @@ function Ages(div){
 
         x_bins = d3.scaleQuantize()
             .domain(x.domain())
-            .range(bins.map(function(d){return d.x0}));
+            .range(bins.map(function(d){return d.x0;}));
 
-        var max_y = d3.max(bins, function(d) { return d.length; })
+        var max_y = d3.max(bins, function(d) { return d.length; });
 
         var y = d3.scaleLinear()
             .domain([0,max_y+max_y/3])
@@ -84,9 +84,9 @@ function Ages(div){
             .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
 
         bar.append("rect")
-            .attr("fill",function(d,i){return colors(i)})
+            .attr("fill",function(d,i){return colors(i);})
             .attr("x", 1)
-            .attr("width", function (d){return x(d.x1)-x(d.x0)-1} /*x(bins[0].x1) - x(bins[0].x0)*/ )
+            .attr("width", function (d){return x(d.x1)-x(d.x0)-1;} /*x(bins[0].x1) - x(bins[0].x0)*/ )
             .attr("height", function(d) { return height - y(d.length) - margin.bottom; });
 
         bar.append("text")
@@ -94,7 +94,7 @@ function Ages(div){
             .attr("fill", "#666666")
             .attr("dy", ".75em")
             .attr("y", -12)
-            .attr("x", function (d){return (x(d.x1)-x(d.x0)-1)/2})
+            .attr("x", function (d){return (x(d.x1)-x(d.x0)-1)/2;})
             .attr("text-anchor", "middle")
             .text(function(d) { return formatCount(d.length); });
 
@@ -114,7 +114,7 @@ function Ages(div){
             .attr("class", "brush")
             .call(brush);
 
-    }
+    };
 
     this.update = function(data){
 
@@ -123,7 +123,7 @@ function Ages(div){
             .thresholds(x.ticks(20))
             (data);
 
-        var max_y = d3.max(bins, function(d) { return d.length; })
+        var max_y = d3.max(bins, function(d) { return d.length; });
 
         var y = d3.scaleLinear()
             .domain([0,max_y+max_y/3])
@@ -147,7 +147,7 @@ function Ages(div){
             .transition()
             .text(function(d) { return formatCount(d.length); });
 
-    }
+    };
 
     function brush_move(){
         if (d3.event.sourceEvent.type === "brush") return;
