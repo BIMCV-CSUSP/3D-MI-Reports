@@ -89,6 +89,7 @@ function create_map(div){
             if(selected.every(function(v){return v==false;})){
                 svgContainer.selectAll("g").attr("class","dep hoverable");
             }
+            updated();
         });
     var lineGraph = g.append("path")
         .attr("d", function(d){return lineFunction(d.geometry)+'Z'; })

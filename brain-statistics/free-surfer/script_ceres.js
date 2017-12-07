@@ -1,7 +1,7 @@
 selections = {
     "gender":null,
     "ages":null,
-    "departments":null
+    "departments":null,
 };
 
 var gender_donut = new Donut("#gender");
@@ -19,9 +19,16 @@ ages_hist.set_on_change(function(values){
 });
 
 var part_histogram = new PartHistogram("#charts");
-var map = create_map("#map");
+var map = new create_map("#map");
+
+map.set_on_change(function(values){
+    selections.departments = values;
+    console.log(selections);
+    console.log(selections.departments[parseInt("10kdscv07".slice(-2))]);
 
 
+    update_graph(d3.select('input[name="selector"]:checked').node().value);
+});
 
 //fill the initial page
 fill_graph(d3.select('input[name="selector"]:checked').node().value);
@@ -117,14 +124,15 @@ function update_graph(option){
             })
             .sortKeys(d3.ascending)
             .entries(file.filter(function(v){
-                if(selections.ages==null || (selections.ages[0]<=v["Age"] && selections.ages[1]>=v["Age"] | selected_regions.indexOf(v[department])>-1 ))
+                if( (selections.ages==null || (selections.ages[0]<=v["Age"] && selections.ages[1]>=v["Age"]) ) &&
+                    ( selections.department==null || selections.department[parseInt(v[department].slice(-2))] ) )
                     return v;
             }));
 
 
         var ages =[];
         file.forEach(function(v) {
-            if(selections.gender==null || selections.gender.indexOf(v["Sex"])>=0 )
+            if((selections.gender==null || selections.gender.indexOf(v["Sex"])>=0 ) && ( selections.department==null || selections.department[parseInt(v[department].slice(-2))] ) )
                 ages.push(v["Age"]);
         });
 
@@ -140,7 +148,6 @@ function update_graph(option){
 
         var columns = [ "I-II", "III", "IV", "VI", "Crus I", "Crus II", "VIIB", "VIIIA", "VIIIB", "IX", "X" ];
         var averages = [];
-        console.log(columns);
 
         columns.forEach(function(column) {
             averages.push({
@@ -155,7 +162,6 @@ function update_graph(option){
 
         });
 
-        console.log(averages);
 
         //console.log(averages[0]);
 
