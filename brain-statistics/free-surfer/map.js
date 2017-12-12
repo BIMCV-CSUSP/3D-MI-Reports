@@ -74,7 +74,7 @@ function create_map(div){
         .style("padding-bottom", "200%")
         .append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 383 766")
+        .attr("viewBox", "0 0 " + real_width + " " + real_width*2)
         .classed("svg-content-responsive", true)
         .attr("transform", function(){
             var bb = area.node().getBoundingClientRect();

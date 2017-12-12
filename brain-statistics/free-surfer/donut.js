@@ -26,10 +26,10 @@ function Donut(div){
     var svg = area.append("div")
         .classed("svg-container", true)
         .style("width","100%")
-        .style("padding-bottom", "100%")
+        .style("padding-bottom", "82%")
         .append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 600 400")
+        .attr("viewBox", "0 0 " + width +" "+width*0.82)
         .classed("svg-content-responsive", true);
     svg.append("text")
         .attr("x",width / 2)

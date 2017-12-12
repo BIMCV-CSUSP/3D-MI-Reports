@@ -22,7 +22,7 @@ function Ages(div){
         .style("padding-bottom", "125%")
         .append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 600 450")
+        .attr("viewBox", "0 0 "+ width + " " + width*1.25)
         .classed("svg-content-responsive", true);
 
     svg.append("text")
