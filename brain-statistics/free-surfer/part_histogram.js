@@ -10,9 +10,14 @@ function PartHistogram(div){
         radius = Math.min(width, height) / 3,
         label_area = 0.3;
 
-    var svg = area.append("svg")
-        .attr("width", "100%")
-        .attr("height", "100%");
+    var svg = area.append("div")
+        .classed("svg-container", true)
+        .style("width","100%")
+        .style("padding-bottom", "110%")
+        .append("svg")
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 959 853")
+        .classed("svg-content-responsive", true);
 
     svg.append("text")
         .attr("x",width / 2-width*label_area/2)
@@ -49,10 +54,6 @@ function PartHistogram(div){
 
     this.fill = function(data){
 
-
-
-
-
         colors = d3.scaleOrdinal()
             .domain(data.map(function(d){return d.key;}))
             .range(palette);
@@ -71,13 +72,32 @@ function PartHistogram(div){
             line_pos.push(x);
         }
 
-        lines_section.selectAll("g.line_right")
-            .data(line_pos, function(d){return d;})
-            .enter()
+        var lines_right = lines_section.selectAll("g.line_right")
+            .data(line_pos, function(d){return d;});
+
+        lines_right.exit() //select the lines that don't exists anymore
+            .style("stroke-opacity",1) //set a start transparency of 1
+            .transition()
+            .attr("transform", function(d){return "translate("+ (width)  +", 0)";}) //move the line to the end
+            .style("stroke-opacity",0) //while fadding out
+            .remove(); //last, remove the line from the page
+
+        lines_right.transition() //update the existing lines
+            .attr("transform", function(d){return "translate("+ (width/2 + width*label_area/2 + x_left(d))  +", 0)";});
+
+        var new_lines_right = lines_right.enter() // select the new lines and add the starting attributes
             .append("g")
             .attr("class","line_right")
+            .attr("transform", function(d){return "translate("+ (width)  +", 0)";})
+            .style("stroke-opacity",0);
+
+
+        new_lines_right.transition() // append the proper lline element
             .attr("transform", function(d){return "translate("+ (width/2 + width*label_area/2 + x_left(d))  +", 0)";})
-            .append("line")
+            .style("stroke-opacity",1);
+
+
+        new_lines_right.append("line") // animate the line container to get in the correct position
             .attr("x1", 0)
             .attr("y1", 0)
             .attr("x2", 0)
@@ -85,13 +105,38 @@ function PartHistogram(div){
             .attr("stroke-width", 1)
             .attr("stroke", "lightgray");
 
-        lines_section.selectAll("g.line_left")
-            .data(line_pos, function(d){return d;})
-            .enter()
+
+
+
+
+
+
+        var lines_left = lines_section.selectAll("g.line_left")
+            .data(line_pos, function(d){return d;});
+
+        lines_left.exit() //select the lines that don't exists anymore
+            .style("stroke-opacity",1) //set a start transparency of 1
+            .transition()
+            .attr("transform", function(d){return "translate(0, 0)";}) //move the line to the end
+            .style("stroke-opacity",0) //while fadding out
+            .remove(); //last, remove the line from the page
+
+        lines_left.transition() //update the existing lines
+            .attr("transform", function(d){return "translate("+ (width/2 - width*label_area/2 - x_left(d))  +", 0)";});
+
+        var new_lines_left = lines_left.enter() // select the new lines and add the starting attributes
             .append("g")
             .attr("class","line_left")
+            .attr("transform", function(d){return "translate( 0, 0)";})
+            .style("stroke-opacity",0);
+
+
+        new_lines_left.transition() // animate the line container to get in the correct position
             .attr("transform", function(d){return "translate("+ (width/2 - width*label_area/2 - x_left(d))  +", 0)";})
-            .append("line")
+            .style("stroke-opacity",1);
+
+
+        new_lines_left.append("line") // append the proper line element
             .attr("x1", 0)
             .attr("y1", 0)
             .attr("x2", 0)
@@ -100,10 +145,10 @@ function PartHistogram(div){
             .attr("stroke", "lightgray");
 
 
+        var bar_select = svg.selectAll("g.bar")
+                .data(data);
 
-        var bar = svg.selectAll(".bar")
-                .data(data)
-            .enter().append("g")
+        var bar = bar_select.enter().append("g")
             .attr("class","bar hoverable");
 
         //left
@@ -123,17 +168,6 @@ function PartHistogram(div){
             .append("title")
                 .text(function(d){return "min: "+f(d.min_lh)+"\naverage: " + f(d.value_lh)+ "\nmax: "+f(d.max_lh);});
 
-        /*bar.append("text")
-            .attr("x", function (d) {
-                return width/2 - width*label_area/2 - x_left(d.value_lh)-20;
-            })
-            .attr("y", function (d) {
-                return y(d.key) + y.bandwidth()-2;
-            })
-            .attr("text-anchor", "end")
-            .style("font-size",(y.bandwidth()-2)+"px")
-            .text(function(d){return f(d.value_lh);});*/
-
         //right
         bar.append("rect")
             .attr("class","right")
@@ -149,18 +183,6 @@ function PartHistogram(div){
             .append("title")
                 .text(function(d){return "min: "+f(d.min_rh)+"\naverage: " + f(d.value_rh)+ "\nmax: "+f(d.max_rh);});
 
-        /*bar.append("text")
-            .attr("x", function (d) {
-                return width/2 + width*label_area/2 + x_left(d.value_lh)+20;
-            })
-            .attr("y", function (d) {
-                return y(d.key) + y.bandwidth()-2;
-            })
-            .attr("text-anchor", "end")
-            .style("font-size",(y.bandwidth()-2)+"px")
-            .text(function(d){return f(d.value_rh);});*/
-
-        //center
         bar.append("text")
             .attr("x", function (d) {
                 return width/2;
@@ -172,11 +194,34 @@ function PartHistogram(div){
             .style("font-size",(y.bandwidth()-2)+"px")
             .text(function(d){return d.key;});
 
+        bar_select.select("rect.left")
+            .transition()
+                .attr("width", function (d) {
+                    var value = x_left(d.value_lh);
+                    return isNaN(value)?0:value;
+                })
+                .attr("x", function (d) {
+                    var value = width/2 - width*label_area/2 - x_left(d.value_lh);
+                    return isNaN(value)?width/2 - width*label_area/2:value;
+                })
+                .select("title")
+                    .text(function(d){
+                        return "min: "+f(d.min_lh)+"\naverage: " + f(d.value_lh)+ "\nmax: "+f(d.max_lh);
+                    });
 
-
-
+        bar_select.select("rect.right")
+            .transition()
+                .attr("width", function (d) {
+                    var value = x_left(d.value_rh);
+                    return isNaN(value)?0:value;
+                })
+                .select("title")
+                    .text(function(d){return "min: "+f(d.min_rh)+"\naverage: " + f(d.value_rh)+ "\nmax: "+f(d.max_rh);});
+        bar_select.select("text")
+            .text(function(d){return d.key;});
 
     };
+
 
     this.update = function(data){
         var bars = svg.selectAll("g.bar").data(data);

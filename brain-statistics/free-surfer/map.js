@@ -49,24 +49,50 @@ function create_map(div){
 
 
     var scale_x = d3.scaleLinear()
-        .domain([0,1])
+        .domain([-0.5,0.5])
         .range([0,width]);
     var scale_y = d3.scaleLinear()
-        .domain([0,1])
+        .domain([-0.5,0.5])
         .range([0,height]);
 
     var lineFunction = d3.line()
          //.curve(d3.curveBasis)
-         .x(function(d) { return scale_x(+d[0]); })
-         .y(function(d) { return scale_y(+d[1]); });
+         .x(function(d) { return scale_x(+d[0]-0.5); })
+         .y(function(d) { return scale_y(+d[1]-0.5); });
 
     var selected = map.departments.map(function(d){return false;});
     //The SVG Container
-    var svgContainer = area.append("svg")
+    /*var svgContainer = area.append("svg")
        .attr("width", width)
        .attr("height", height)
        .attr("transform", "translate(" + ((real_width/2 - width/2)+margin) + "," + ((real_height/2-height/2)+margin) + ")");
+       */
 
+    var svgContainer = area.append("div")
+        .classed("svg-container", true)
+        .style("width","100%")
+        .style("padding-bottom", "200%")
+        .append("svg")
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 383 766")
+        .classed("svg-content-responsive", true)
+        .attr("transform", function(){
+            var bb = area.node().getBoundingClientRect();
+            var real_width = bb.width-margin*2;
+            var real_height = bb.height-margin*2;
+
+            var width,height;
+            if(real_width*map.proportion>real_height){
+                height = real_height;
+                width = real_height / map.proportion;
+            }
+            else{
+                width = real_width;
+                height = real_width * map.proportion;
+            }
+
+            return "translate(" + ((real_width/2 - width/2)+margin) + "," + ((real_height/2-height/2)+margin) + ")";
+        });
 
 
     div = area.append("div")

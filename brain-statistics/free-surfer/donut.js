@@ -23,9 +23,14 @@ function Donut(div){
         .sort(null)
         .value(function(d) { return d.value; });
 
-    var svg = area.append("svg")
-        .attr("width", "100%")
-        .attr("height", "100%");
+    var svg = area.append("div")
+        .classed("svg-container", true)
+        .style("width","100%")
+        .style("padding-bottom", "100%")
+        .append("svg")
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 600 400")
+        .classed("svg-content-responsive", true);
     svg.append("text")
         .attr("x",width / 2)
         .attr("y",height / 2 - radius)
