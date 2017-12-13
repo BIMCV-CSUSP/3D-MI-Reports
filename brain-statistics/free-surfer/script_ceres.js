@@ -68,12 +68,13 @@ function fill_graph(option){
         });
 
         var columns = [ "I-II", "III", "IV", "VI", "Crus I", "Crus II", "VIIB", "VIIIA", "VIIIB", "IX", "X" ];
+        var names = {"I-II":"Lobules I,II", "III": "Lobule III", "IV": "Lobule IV", "VI": "Lobule VI", "Crus I": "Crus I" , "Crus II": "Crus II", "VIIB":"Lobule VIIB", "VIIIA":"Lobule VIIIA", "VIIIB":"Lobule VIIIB", "IX":"Lobule IX", "X":"Lobule X"};
         var averages = [];
         console.log(columns);
 
         columns.forEach(function(column) {
             averages.push({
-                key: column,
+                key: names[column],
                 value_lh: d3.mean(file, function(d) { return +d[""+column+" left "+option]; }),
                 value_rh: d3.mean(file, function(d) { return +d[""+column+" right "+option]; }),
                 max_lh: d3.max(file, function(d) { return +d[""+column+" left "+option]; }),
@@ -147,11 +148,12 @@ function update_graph(option){
         });
 
         var columns = [ "I-II", "III", "IV", "VI", "Crus I", "Crus II", "VIIB", "VIIIA", "VIIIB", "IX", "X" ];
+        var names = {"I-II":"Lobules I,II", "III": "Lobule III", "IV": "Lobule IV", "VI": "Lobule VI", "Crus I": "Crus I" , "Crus II": "Crus II", "VIIB":"Lobule VIIB", "VIIIA":"Lobule VIIIA", "VIIIB":"Lobule VIIIB", "IX":"Lobule IX", "X":"Lobule X"};
         var averages = [];
 
         columns.forEach(function(column) {
             averages.push({
-                key: column,
+                key: names[column],
                 value_lh: d3.mean(file, function(d) { return +d[""+column+" left "+option]; }),
                 value_rh: d3.mean(file, function(d) { return +d[""+column+" right "+option]; }),
                 max_lh: d3.max(file, function(d) { return +d[""+column+" left "+option]; }),
