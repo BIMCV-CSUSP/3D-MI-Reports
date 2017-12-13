@@ -50,7 +50,17 @@ function PartHistogram(div){
         .rangeRound([0, height], 0.1)
 		.paddingInner(0.1);
 
-    var f = d3.format(".2s");
+    var f = d3.format(".3s");
+
+    this.resize = function(){
+        var bb = area.node().getBoundingClientRect();
+
+        var width = bb.width;
+
+        var svgContainer = area.select(".svg-content-responsive")
+            .attr("viewBox", "0 0 "+ width + " " + width*1.1);
+
+    };
 
     this.fill = function(data){
 
@@ -67,7 +77,7 @@ function PartHistogram(div){
 
         //generation of lines
         var line_pos = [];
-        var increments = max > 10 ? max > 100 ? 500 : 1 : 0.1;
+        var increments = max > 5 ? max > 10 ? max > 20 ? max > 50 ? max > 100 ? 500 : 10 : 5 : 1 : 0.5 :0.1;
         for (var x = 0; x <= max; x+=increments ){
             line_pos.push(x);
         }
@@ -245,7 +255,7 @@ function PartHistogram(div){
 
         //update of lines
         var line_pos = [];
-        var increments = max > 10 ? max > 100 ? 500 : 1 : 0.1;
+        var increments = max > 5 ? max > 10 ? max > 20 ? max > 50 ? max > 100 ? 500 : 10 : 5 : 1 : 0.5 :0.1;
         for (var x = 0; x <= max; x+=increments ){
             line_pos.push(x);//compute the index of each one
         }

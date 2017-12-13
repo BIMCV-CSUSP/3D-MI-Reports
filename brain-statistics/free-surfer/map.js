@@ -145,6 +145,16 @@ function create_map(div){
         on_change = f;
     };
 
+    this.resize = function(){
+        var bb = area.node().getBoundingClientRect();
+
+        var real_width = bb.width-margin*2;
+
+        var svgContainer = area.select(".svg-content-responsive")
+            .attr("viewBox", "0 0 " + real_width + " " + real_width*2);
+
+    };
+
     function updated(){
         if(on_change==null) return;
 

@@ -19,7 +19,7 @@ ages_hist.set_on_change(function(values){
 });
 
 var part_histogram = new PartHistogram("#charts");
-create_map("#map");
+var map = new create_map("#map");
 
 
 

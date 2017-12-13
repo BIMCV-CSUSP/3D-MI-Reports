@@ -52,6 +52,17 @@ function Donut(div){
         on_change = f;
     };
 
+
+    this.resize = function(){
+        var bb = area.node().getBoundingClientRect();
+
+        var width = bb.width;
+
+        var svgContainer = area.select(".svg-content-responsive")
+            .attr("viewBox", "0 0 "+ width + " " + width*0.85);
+
+    };
+
     this.fill = function(data){
         //selected = data.map(function(v){return false;});
         keys = data.map(function(d){return d.key;});

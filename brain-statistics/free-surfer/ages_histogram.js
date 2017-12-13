@@ -53,6 +53,16 @@ function Ages(div){
         on_change = f;
     };
 
+    this.resize = function(){
+        var bb = area.node().getBoundingClientRect();
+
+        var width = bb.width;
+
+        var svgContainer = area.select(".svg-content-responsive")
+            .attr("viewBox", "0 0 "+ width + " " + width*1.25);
+
+    };
+
     this.fill = function(data){
 
         var [min, max] = d3.extent(data);
