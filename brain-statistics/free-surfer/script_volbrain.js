@@ -19,8 +19,13 @@ ages_hist.set_on_change(function(values){
 });
 
 var part_histogram = new PartHistogram("#charts");
-create_map("#map");
+var map = new create_map("#map");
 
+map.set_on_change(function(values){
+    selections.departments = values;
+
+    update_graph(null);
+});
 
 
 //fill the initial page
@@ -108,21 +113,24 @@ function update_graph(option){
             })
             .sortKeys(d3.ascending)
             .entries(file.filter(function(v){
-                if(selections.ages==null || (selections.ages[0]<=v.Age && selections.ages[1]>=v.Age))
+                if((selections.ages==null || (selections.ages[0]<=v.Age && selections.ages[1]>=v.Age)) &&
+                ( selections.departments==null || selections.departments.indexOf(v.Department)>=0  ))
                     return v;
             }));
 
 
         var ages =[];
         file.forEach(function(v) {
-            if(selections.gender==null || selections.gender.indexOf(v.Sex)>=0 )
+            if((selections.gender==null || selections.gender.indexOf(v.Sex)>=0 ) &&
+            ( selections.departments==null || selections.departments.indexOf(v.Department)>=0  ))
                 ages.push(v.Age);
         });
 
 
         file=file.filter(function(v){
             if((selections.ages==null || (selections.ages[0]<=v.Age && selections.ages[1]>=v.Age)) &&
-               (selections.gender==null || selections.gender.indexOf(v.Sex)>=0 )){
+               (selections.gender==null || selections.gender.indexOf(v.Sex)>=0 )&&
+               ( selections.departments==null || selections.departments.indexOf(v.Department)>=0  )){
                 return v;
             }
         });
@@ -147,9 +155,9 @@ function update_graph(option){
 
 
 
-        gender_donut.update(gender);
+        gender_donut.fill(gender);
         ages_hist.update(ages);
-        part_histogram.update(averages);
+        part_histogram.fill(averages);
 
         updating_data=false;
     }

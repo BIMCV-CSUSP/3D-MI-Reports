@@ -63,12 +63,13 @@ function Donut(div){
 
     };
 
+
     this.fill = function(data){
         //selected = data.map(function(v){return false;});
         keys = data.map(function(d){return d.key;});
-        var g = svg.selectAll(".arc")
-              .data(pie(data),function(d){return d.data.key;})
-            .enter().append("g")
+        var arcs = svg.selectAll(".arc")
+              .data(pie(data),function(d){return d.data.key;});
+        var g = arcs.enter().append("g")
               .attr("class", "arc hoverable")
               .on("click",function(d,i){
                   if(selected[i]==false){
@@ -94,24 +95,34 @@ function Donut(div){
         g.append("title")
             .text(function(d){return d.data.key + ": " + format((d.endAngle - d.startAngle)/(2*Math.PI)); });
 
+        svg.selectAll("path")
+            .data(pie(data),function(d){return d.data.key;})
+            .transition()
+            .attrTween("d", arcTween);
+
+        svg.selectAll("title")
+            .data(pie(data),function(d){return d.data.key;})
+            .text(function(d){return d.data.key + ": " + format((d.endAngle - d.startAngle)/(2*Math.PI)) ;});
+
         /*g.append("text")
             .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
             .attr("dy", ".35em")
             .text(function(d) { return d.data.key; });
             */
+        arcs.exit().remove();
 
         var legendRectSize=15;
 
         var legendSpacing=7;
         var legendHeight=legendRectSize+legendSpacing;
 
-        var legend=svg.selectAll('.legend')
-            .data(data,function(d){return d.key;})
-            .enter().append('g')
+        var legend =svg.selectAll('.legend')
+            .data(data,function(d){return d.key;});
+        var legend_new = legend.enter().append('g')
             .attr("class","legend")
             .attr("transform",function(d,i){ return 'translate(-20,' + ((i*legendHeight)-20) + ')';});
 
-        legend.append('rect')
+        legend_new.append('rect')
             .attr("width",legendRectSize)
             .attr("height",legendRectSize)
             .attr("rx",20)
@@ -120,12 +131,14 @@ function Donut(div){
             .style("stroke",function(d){return color[d.key];});
 
 
-        legend.append('text')
+        legend_new.append('text')
             .attr("x",30)
             .attr("y",15)
             .text(function(d){return d.key;})
             .style("fill","black")
             .style("font-size","12px");
+
+        legend.exit().remove();
     };
 
     this.update = function(data){

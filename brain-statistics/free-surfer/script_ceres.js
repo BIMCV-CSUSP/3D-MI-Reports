@@ -23,9 +23,6 @@ var map = new create_map("#map");
 
 map.set_on_change(function(values){
     selections.departments = values;
-    console.log(selections);
-    console.log(selections.departments[parseInt("10kdscv07".slice(-2))]);
-
 
     update_graph(d3.select('input[name="selector"]:checked').node().value);
 });
@@ -50,27 +47,24 @@ function fill_graph(option){
 
     function load_data(error,file){
 
-        console.log(file);
 
         var gender = d3.nest()
-            .key(function(d) { return d["Sex"];})
+            .key(function(d) { return d.Sex;})
             .sortKeys(d3.ascending)
             .rollup(function(d) {
                 return d.length;
                 //return d3.sum(d, function(g) {return g.value; });
             })
             .entries(file);
-        console.log("columns");
 
         var ages =[];
         file.forEach(function(d) {
-            ages.push(d["Age"]);
+            ages.push(d.Age);
         });
 
         var columns = [ "I-II", "III", "IV", "VI", "Crus I", "Crus II", "VIIB", "VIIIA", "VIIIB", "IX", "X" ];
         var names = {"I-II":"Lobules I,II", "III": "Lobule III", "IV": "Lobule IV", "VI": "Lobule VI", "Crus I": "Crus I" , "Crus II": "Crus II", "VIIB":"Lobule VIIB", "VIIIA":"Lobule VIIIA", "VIIIB":"Lobule VIIIB", "IX":"Lobule IX", "X":"Lobule X"};
         var averages = [];
-        console.log(columns);
 
         columns.forEach(function(column) {
             averages.push({
@@ -82,10 +76,8 @@ function fill_graph(option){
                 min_lh: d3.min(file, function(d) { return +d[""+column+" left "+option]; }),
                 min_rh: d3.min(file, function(d) { return +d[""+column+" right "+option]; }),
             });
-            console.log(""+column+" "+option)
 
         });
-        console.log(averages);
 
         //console.log(averages[0]);
 
@@ -115,9 +107,8 @@ function update_graph(option){
 
     function load_data(error, file){
 
-        console.log(file);
         var gender = d3.nest()
-            .key(function(d) { return d["Sex"];})
+            .key(function(d) { return d.Sex;})
             //.sortKeys(function (a,b){return a-b;})
             .rollup(function(d) {
                 return d.length;
@@ -125,24 +116,25 @@ function update_graph(option){
             })
             .sortKeys(d3.ascending)
             .entries(file.filter(function(v){
-                if( (selections.ages==null || (selections.ages[0]<=v["Age"] && selections.ages[1]>=v["Age"]) ) &&
-                    ( selections.department==null || selections.department[parseInt(v[department].slice(-2))] ) )
+                if( (selections.ages==null || (selections.ages[0]<=v.Age && selections.ages[1]>=v.Age) ) &&
+                        ( selections.departments==null || selections.departments.indexOf(v.Department)>=0  ) )
                     return v;
             }));
 
 
         var ages =[];
         file.forEach(function(v) {
-            if((selections.gender==null || selections.gender.indexOf(v["Sex"])>=0 ) && ( selections.department==null || selections.department[parseInt(v[department].slice(-2))] ) )
-                ages.push(v["Age"]);
+            if((selections.gender==null || selections.gender.indexOf(v.Sex)>=0 ) && ( selections.departments==null || selections.departments.indexOf(v.Department)>=0 ) )
+                ages.push(v.Age);
         });
 
 
 
 
         file=file.filter(function(v){
-            if((selections.ages==null || (selections.ages[0]<=v["Age"] && selections.ages[1]>=v["Age"])) &&
-               (selections.gender==null || selections.gender.indexOf(v["Sex"])>=0 )){
+            if((selections.ages==null || (selections.ages[0]<=v.Age && selections.ages[1]>=v.Age)) &&
+               (selections.gender==null || selections.gender.indexOf(v.Sex)>=0 ) &&
+               ( selections.departments==null || selections.departments.indexOf(v.Department)>=0  )){
                 return v;
             }
         });
@@ -169,9 +161,9 @@ function update_graph(option){
 
 
 
-        gender_donut.update(gender);
+        gender_donut.fill(gender);
         ages_hist.update(ages);
-        part_histogram.update(averages);
+        part_histogram.fill(averages);
 
         updating_data=false;
     }
