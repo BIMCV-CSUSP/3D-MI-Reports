@@ -15,11 +15,11 @@
         CERES: A new cerebellum lobule segmentation method
         Jose Romero et al."/>
     </div>
-    <div id="radio_form">
+    <!--<div id="radio_form">
         <div id="radio_buttons">
             <input type="radio" value="cm3" id="area" name="selector" checked><label for="area">Volume</label><input type="radio" value="grey matter cm3" id="volume" name="selector"><label for="volume">G.M. vol.</label><input type="radio" value="cortical thickness" id="thickness" name="selector"><label for="thickness">Cort. thick.</label>
         </div>
-    </div>
+    </div>-->
     <div id="map">
     </div>
 
@@ -28,8 +28,13 @@
         </div>
 
     </div>
-    <div id="charts"  style="height: 40%;">
-
+    <div id="charts">
+        <div class="cerchart_title"><span>Volume</span></div>
+        <div id="cerchart_1" class="cerchart" style="height: 30%;"></div>
+        <div class="cerchart_title"><span>Gray Matter Volume</span></div>
+        <div id="cerchart_2" class="cerchart" style="height: 30%;"></div>
+        <div class="cerchart_title"><span>Cortical Thickness</span></div>
+        <div id="cerchart_3" class="cerchart" style="height: 30%;"></div>
     </div>
     <div id="select_area">
         <div id="gender">

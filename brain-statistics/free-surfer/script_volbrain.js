@@ -48,8 +48,10 @@ function fill_graph(option){
 
     function load_data(error,file){
 
+        var g_conversor = {"Female":"F","Male":"M", "UNKNOWN":"U"};
+
         var gender = d3.nest()
-            .key(function(d) { return d.Sex;})
+            .key(function(d) { return g_conversor[d.Sex];})
                 .sortKeys(d3.ascending)
                 .rollup(function(d) {
                 return d.length;
@@ -103,9 +105,10 @@ function update_graph(option){
 
     function load_data(error,file){
 
+        var g_conversor = {"Female":"F","Male":"M", "UNKNOWN":"U"};
 
         var gender = d3.nest()
-            .key(function(d) { return d.Sex;})
+            .key(function(d) { return g_conversor[d.Sex];})
             //.sortKeys(function (a,b){return a-b;})
             .rollup(function(d) {
                 return d.length;
@@ -121,7 +124,7 @@ function update_graph(option){
 
         var ages =[];
         file.forEach(function(v) {
-            if((selections.gender==null || selections.gender.indexOf(v.Sex)>=0 ) &&
+            if((selections.gender==null || selections.gender.indexOf(g_conversor[v.Sex])>=0 ) &&
             ( selections.departments==null || selections.departments.indexOf(v.Department)>=0  ))
                 ages.push(v.Age);
         });
@@ -129,7 +132,7 @@ function update_graph(option){
 
         file=file.filter(function(v){
             if((selections.ages==null || (selections.ages[0]<=v.Age && selections.ages[1]>=v.Age)) &&
-               (selections.gender==null || selections.gender.indexOf(v.Sex)>=0 )&&
+               (selections.gender==null || selections.gender.indexOf(g_conversor[v.Sex])>=0 )&&
                ( selections.departments==null || selections.departments.indexOf(v.Department)>=0  )){
                 return v;
             }

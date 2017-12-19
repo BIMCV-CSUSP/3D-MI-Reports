@@ -11,13 +11,13 @@ function Donut(div){
     //var color = d3.scaleOrdinal()
     //    .range(["#8888FF", "#FF8888", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
-    var color = {M:"#8888DD", F:"#F590E5", MO:"#AAAAFF", FO:"#F6A1F6", Male:"#8888DD", Female:"#F590E5", UNKNOWN:"#8822DD"};
+    var color = {M:"#8888DD", F:"#F590E5", MO:"#AAAAFF", FO:"#F6A1F6", Male:"#8888DD", Female:"#F590E5", UNKNOWN:"#8822DD",U:"#8822DD"};
 
     var arc = d3.arc()
         .cornerRadius(5)
         .padAngle(0.025)
         .outerRadius(radius - 10)
-        .innerRadius(radius - 60);
+        .innerRadius((radius - 10)*0.75);
 
     var pie = d3.pie()
         .sort(null)
