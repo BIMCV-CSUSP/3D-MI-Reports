@@ -170,3 +170,31 @@ g.hoverable rect:hover {
     margin-bottom: 0;
     padding-top: 2%;
 }
+
+#volchart_1{
+    #background-color: blue;
+    height: 18%;
+    width: 100%;
+}
+
+#volchart_2{
+    #background-color: blue;
+    height: 19%;
+    width: 100%;
+}
+
+#volchart_3{
+    #background-color: blue;
+    height: 30%;
+    width: 100%;
+}
+
+.volseparator{
+    height: 7%;
+    width: 100%;
+}
+
+.footer{
+    text-align:center;
+    font-size: 9px;
+}

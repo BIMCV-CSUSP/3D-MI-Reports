@@ -17,8 +17,9 @@ ages_hist.set_on_change(function(values){
     update_graph(null);
 
 });
-
-var part_histogram = new PartHistogram("#charts");
+var histogram = new HorizontalHistogram("#volchart_1");
+var part_histogram = new PartHistogram("#volchart_2");
+var part_histogram_2 = new PartHistogram("#volchart_3");
 var map = new create_map("#map");
 
 map.set_on_change(function(values){
@@ -65,11 +66,61 @@ function fill_graph(option){
             ages.push(d.Age);
         });
 
-        var columns = [ "Lateral ventricles", "Caudate", "Putamen", "Thalamus", "Globus Pallidus", "Hippocampus", "Amygdala", "Accumbens"];
+        var generic_columns = ["Tissue GM", "Tissue WM", "Tissue CSF", "Tissue Brain", "Tissue IC"];
+        var converter = {"Tissue WM":"White Matter(WM)", "Tissue GM":"Grey Matter (GM)", "Tissue CSF":"Cerebro Spinal Fluid", "Tissue Brain":"Brain (WM + GM)", "Tissue IC":"Intracranial Cavity"};
+        var generic_averages=[];
+        generic_columns.forEach(function(column) {
+
+            generic_averages.push({
+                key: converter[column],
+                value_lh: d3.mean(file, function(d) { return +d[""+column+" cm3"]; }),
+                value_rh: d3.mean(file, function(d) { return +d[""+column+" cm3"]; }),
+                max_lh: d3.max(file, function(d) { return +d[""+column+" cm3"]; }),
+                max_rh: d3.max(file, function(d) { return +d[""+column+" cm3"]; }),
+                min_lh: d3.min(file, function(d) { return +d[""+column+" cm3"]; }),
+                min_rh: d3.min(file, function(d) { return +d[""+column+" cm3"]; }),
+            });
+
+        });
+
+
+        var columns = [ "Cerebrum", "Cerebelum"];
+        var subcolumns = ["GM","WM"];
         var averages = [];
 
         columns.forEach(function(column) {
-            averages.push({
+            subcolumns.forEach(function(sub){
+                averages.push({
+                    key: column+" "+sub,
+                    value_lh: d3.mean(file, function(d) { return +d[""+column+" "+"L" + " "+sub+" cm3"]; }),
+                    value_rh: d3.mean(file, function(d) { return +d[""+column+" "+"R"+ " "+sub +" cm3"]; }),
+                    max_lh: d3.max(file, function(d) { return +d[""+column+" "+"L"+ " "+sub +" cm3"]; }),
+                    max_rh: d3.max(file, function(d) { return +d[""+column+" "+"R" + " "+sub +" cm3"]; }),
+                    min_lh: d3.min(file, function(d) { return +d[""+column+" "+"L" + " "+sub +" cm3"]; }),
+                    min_rh: d3.min(file, function(d) { return +d[""+column+" "+"R"+ " "+sub +" cm3"]; }),
+                });
+
+            });
+
+
+        });
+        averages.push({
+            key: "Brainstem*",
+            value_lh: d3.mean(file, function(d) { return +d["Brainstem cm3"]; }),
+            value_rh: d3.mean(file, function(d) { return +d["Brainstem cm3"]; }),
+            max_lh: d3.max(file, function(d) { return +d["Brainstem cm3"]; }),
+            max_rh: d3.max(file, function(d) { return +d["Brainstem cm3"]; }),
+            min_lh: d3.min(file, function(d) { return +d["Brainstem cm3"]; }),
+            min_rh: d3.min(file, function(d) { return +d["Brainstem cm3"]; }),
+        });
+
+
+        var columns2 = [ "Lateral ventricles", "Caudate", "Putamen", "Thalamus", "Globus Pallidus", "Hippocampus", "Amygdala", "Accumbens"];
+        var averages_2 = [];
+
+        columns2.forEach(function(column) {
+
+            averages_2.push({
                 key: column,
                 value_lh: d3.mean(file, function(d) { return +d[""+column+" "+"Left"+" cm3"]; }),
                 value_rh: d3.mean(file, function(d) { return +d[""+column+" "+"Right"+" cm3"]; }),
@@ -81,13 +132,17 @@ function fill_graph(option){
 
         });
 
+
         //console.log(averages[0]);
 
 
 
         gender_donut.fill(gender);
         ages_hist.fill(ages);
+
+        histogram.fill(generic_averages);
         part_histogram.fill(averages);
+        part_histogram_2.fill(averages_2);
     }
 }
 
@@ -138,11 +193,61 @@ function update_graph(option){
             }
         });
 
-        var columns = [ "Lateral ventricles", "Caudate", "Putamen", "Thalamus", "Globus Pallidus", "Hippocampus", "Amygdala", "Accumbens" ];
+        var generic_columns = [ "Tissue GM", "Tissue WM", "Tissue CSF", "Tissue Brain", "Tissue IC"];
+        var converter = {"Tissue WM":"White Matter(WM)", "Tissue GM":"Grey Matter (GM)", "Tissue CSF":"Cerebro Spinal Fluid", "Tissue Brain":"Brain (WM + GM)", "Tissue IC":"Intracranial Cavity"};
+        var generic_averages=[];
+        generic_columns.forEach(function(column) {
+
+            generic_averages.push({
+                key: converter[column],
+                value_lh: d3.mean(file, function(d) { return +d[""+column+" cm3"]; }),
+                value_rh: d3.mean(file, function(d) { return +d[""+column+" cm3"]; }),
+                max_lh: d3.max(file, function(d) { return +d[""+column+" cm3"]; }),
+                max_rh: d3.max(file, function(d) { return +d[""+column+" cm3"]; }),
+                min_lh: d3.min(file, function(d) { return +d[""+column+" cm3"]; }),
+                min_rh: d3.min(file, function(d) { return +d[""+column+" cm3"]; }),
+            });
+
+        });
+
+
+        var columns = [ "Cerebrum", "Cerebelum"];
+        var subcolumns = ["GM","WM"];
         var averages = [];
 
         columns.forEach(function(column) {
-            averages.push({
+            subcolumns.forEach(function(sub){
+                averages.push({
+                    key: column+" "+sub,
+                    value_lh: d3.mean(file, function(d) { return +d[""+column+" "+"L" + " "+sub+" cm3"]; }),
+                    value_rh: d3.mean(file, function(d) { return +d[""+column+" "+"R"+ " "+sub +" cm3"]; }),
+                    max_lh: d3.max(file, function(d) { return +d[""+column+" "+"L"+ " "+sub +" cm3"]; }),
+                    max_rh: d3.max(file, function(d) { return +d[""+column+" "+"R" + " "+sub +" cm3"]; }),
+                    min_lh: d3.min(file, function(d) { return +d[""+column+" "+"L" + " "+sub +" cm3"]; }),
+                    min_rh: d3.min(file, function(d) { return +d[""+column+" "+"R"+ " "+sub +" cm3"]; }),
+                });
+
+            });
+
+
+        });
+        averages.push({
+            key: "Brainstem*",
+            value_lh: d3.mean(file, function(d) { return +d["Brainstem cm3"]; }),
+            value_rh: d3.mean(file, function(d) { return +d["Brainstem cm3"]; }),
+            max_lh: d3.max(file, function(d) { return +d["Brainstem cm3"]; }),
+            max_rh: d3.max(file, function(d) { return +d["Brainstem cm3"]; }),
+            min_lh: d3.min(file, function(d) { return +d["Brainstem cm3"]; }),
+            min_rh: d3.min(file, function(d) { return +d["Brainstem cm3"]; }),
+        });
+
+
+        var columns2 = [ "Lateral ventricles", "Caudate", "Putamen", "Thalamus", "Globus Pallidus", "Hippocampus", "Amygdala", "Accumbens"];
+        var averages_2 = [];
+
+        columns2.forEach(function(column) {
+
+            averages_2.push({
                 key: column,
                 value_lh: d3.mean(file, function(d) { return +d[""+column+" "+"Left"+" cm3"]; }),
                 value_rh: d3.mean(file, function(d) { return +d[""+column+" "+"Right"+" cm3"]; }),
@@ -153,14 +258,16 @@ function update_graph(option){
             });
 
         });
-
         //console.log(averages[0]);
 
 
 
         gender_donut.fill(gender);
         ages_hist.update(ages);
+
+        histogram.fill(generic_averages);
         part_histogram.fill(averages);
+        part_histogram_2.fill(averages_2);
 
         updating_data=false;
     }

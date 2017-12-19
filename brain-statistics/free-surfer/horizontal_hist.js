@@ -1,4 +1,4 @@
-function PartHistogram(div){
+function HorizontalHistogram(div){
 
     palette = ['#bdd7e7','#6baed6','#3182bd','#08519c','#bae4b3','#74c476','#31a354','#006d2c','#fcae91','#fb6a4a','#de2d26','#a50f15','#cbc9e2','#9e9ac8','#756bb1','#54278f','#fdbe85','#fd8d3c','#e6550d','#a63603','#a1dab4','#41b6c4','#2c7fb8','#253494'];
 
@@ -18,20 +18,6 @@ function PartHistogram(div){
         .attr("preserveAspectRatio", "xMinYMin meet")
         .attr("viewBox", "0 0 " + width + " " + width*1.1)
         .classed("svg-content-responsive", true);
-
-    svg.append("text")
-        .attr("x",width / 2-width*label_area/2)
-        .attr("y", bb.height/12)
-        .attr("text-anchor", "end")
-        .style("font-weight", "bold")
-        .text("Left Hemisphere");
-
-    svg.append("text")
-        .attr("x",width / 2+width*label_area/2)
-        .attr("y", bb.height/12)
-        .attr("text-anchor", "start")
-        .style("font-weight", "bold")
-        .text("Right Hemisphere");
 
     svg = svg.append("g").attr("transform","translate(0,"+(bb.height/2-height/2)+")");
 
@@ -77,7 +63,7 @@ function PartHistogram(div){
 
         //generation of lines
         var line_pos = [];
-        var increments = max > 5 ? max > 10 ? max > 20 ? max > 50 ? max > 100 ? max > 1000? 500 : 50 : 10 : 5 : 1 : 0.5 :0.1;
+        var increments = max > 5 ? max > 10 ? max > 20 ? max > 50 ? max > 100 ? max > 1000? 250 : 50 : 10 : 5 : 1 : 0.5 :0.1;
         for (var x = 0; x <= max; x+=increments ){
             line_pos.push(x);
         }
@@ -255,7 +241,7 @@ function PartHistogram(div){
 
         //update of lines
         var line_pos = [];
-        var increments = max > 5 ? max > 10 ? max > 20 ? max > 50 ? max > 100 ? max > 1000? 500 : 50 : 10 : 5 : 1 : 0.5 :0.1;
+        var increments = max > 5 ? max > 10 ? max > 20 ? max > 50 ? max > 100 ? max > 1000? 250 : 50 : 10 : 5 : 1 : 0.5 :0.1;
         for (var x = 0; x <= max; x+=increments ){
             line_pos.push(x);//compute the index of each one
         }
