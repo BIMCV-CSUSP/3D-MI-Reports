@@ -67,7 +67,6 @@ function fill_graph(option){
 
         var ages = d3.nest()
             .key(function(d) { return d.Age;})
-            .sortKeys(function(a, b){return d3.ascending(+a, +b);})
             .rollup(function(d) {
                 //return d.length;
                 return d3.sum(d, function(g) {return g.count; });
@@ -80,6 +79,8 @@ function fill_graph(option){
                         length: group.value};
 
             });
+        ages.sort(function(a,b){return a.x0-b.x0;});
+
 
         var columns = [ "I-II", "III", "IV", "V", "VI", "Crus I", "Crus II", "VIIB", "VIIIA", "VIIIB", "IX", "X" ];
         var names = {"I-II":"Lobules I,II", "III": "Lobule III", "IV": "Lobule IV", "V": "Lobule V", "VI": "Lobule VI", "Crus I": "Crus I" , "Crus II": "Crus II", "VIIB":"Lobule VIIB", "VIIIA":"Lobule VIIIA", "VIIIB":"Lobule VIIIB", "IX":"Lobule IX", "X":"Lobule X"};
@@ -175,7 +176,6 @@ function update_graph(option){
         });*/
         var ages = d3.nest()
             .key(function(d) { return d.Age;})
-            .sortKeys(function(a, b){return d3.ascending(+a, +b);})
             .rollup(function(d) {
                 //return d.length;
                 return d3.sum(d, function(g) {return g.count; });
@@ -192,6 +192,7 @@ function update_graph(option){
                         length: group.value};
 
             });
+        ages.sort(function(a,b){return a.x0-b.x0;});
 
 
 
