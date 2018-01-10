@@ -11,12 +11,13 @@ gender_donut.set_on_change( function(values){
 
 });
 
-var ages_hist = new Ages("#ages");
+var ages_hist = new BinnedHistogram("#ages");
 ages_hist.set_on_change(function(values){
     selections.ages=values;
     update_graph(null);
 
 });
+
 var histogram = new HorizontalHistogram("#volchart_1");
 var part_histogram = new PartHistogram("#volchart_2");
 var part_histogram_2 = new PartHistogram("#volchart_3");
@@ -38,7 +39,7 @@ d3.selectAll("input[name='selector']")
     });
 
 function fill_graph(option){
-    var file_name = "data/volBrain.csv";
+    var file_name = "data/volBrain_pre.csv";
 
 
     d3.queue()
@@ -55,30 +56,50 @@ function fill_graph(option){
             .key(function(d) { return g_conversor[d.Sex];})
                 .sortKeys(d3.ascending)
                 .rollup(function(d) {
-                return d.length;
-                //return d3.sum(d, function(g) {return g.value; });
+                //return d.length;
+                return d3.sum(d, function(g) {return g.count; });
             })
             .entries(file);
 
 
-        var ages =[];
+        /*var ages =[];
         file.forEach(function(d) {
             ages.push(d.Age);
-        });
+        });*/
+
+        var ages = d3.nest()
+            .key(function(d) { return d.Age;})
+            .sortKeys(function(a, b){return d3.ascending(+a, +b);})
+            .rollup(function(d) {
+                //return d.length;
+                return d3.sum(d, function(g) {return g.count; });
+            })
+            .entries(file)
+            .filter(function(v){if( !isNaN(v.key) ) return v;})
+            .map(function(group){
+                return {x0: parseInt(group.key),
+                        x1: parseInt(group.key) + 5,
+                        length: group.value};
+
+            });
+
+        var num_subjects = d3.sum(file, function(d){ return +d.count;});
 
         var generic_columns = ["Tissue GM", "Tissue WM", "Tissue CSF", "Tissue Brain", "Tissue IC"];
         var converter = {"Tissue WM":"White Matter(WM)", "Tissue GM":"Grey Matter (GM)", "Tissue CSF":"Cerebro Spinal Fluid", "Tissue Brain":"Brain (WM + GM)", "Tissue IC":"Intracranial Cavity"};
         var generic_averages=[];
         generic_columns.forEach(function(column) {
-
+            var ave = d3.sum(file, function(d) { return +d["average_"+column+" cm3"]*(+d.count/num_subjects); });
+            var max = d3.max(file, function(d) { return +d["max_"+column+" cm3"]; });
+            var min = d3.min(file, function(d) { return +d["min_"+column+" cm3"]; });
             generic_averages.push({
                 key: converter[column],
-                value_lh: d3.mean(file, function(d) { return +d[""+column+" cm3"]; }),
-                value_rh: d3.mean(file, function(d) { return +d[""+column+" cm3"]; }),
-                max_lh: d3.max(file, function(d) { return +d[""+column+" cm3"]; }),
-                max_rh: d3.max(file, function(d) { return +d[""+column+" cm3"]; }),
-                min_lh: d3.min(file, function(d) { return +d[""+column+" cm3"]; }),
-                min_rh: d3.min(file, function(d) { return +d[""+column+" cm3"]; }),
+                value_lh: ave,
+                value_rh: ave,
+                max_lh: max,
+                max_rh: max,
+                min_lh: min,
+                min_rh: min,
             });
 
         });
@@ -92,28 +113,30 @@ function fill_graph(option){
             subcolumns.forEach(function(sub){
                 averages.push({
                     key: column+" "+sub,
-                    value_lh: d3.mean(file, function(d) { return +d[""+column+" "+"L" + " "+sub+" cm3"]; }),
-                    value_rh: d3.mean(file, function(d) { return +d[""+column+" "+"R"+ " "+sub +" cm3"]; }),
-                    max_lh: d3.max(file, function(d) { return +d[""+column+" "+"L"+ " "+sub +" cm3"]; }),
-                    max_rh: d3.max(file, function(d) { return +d[""+column+" "+"R" + " "+sub +" cm3"]; }),
-                    min_lh: d3.min(file, function(d) { return +d[""+column+" "+"L" + " "+sub +" cm3"]; }),
-                    min_rh: d3.min(file, function(d) { return +d[""+column+" "+"R"+ " "+sub +" cm3"]; }),
+                    value_lh: d3.sum(file, function(d) { return +d["average_"+column+" "+"L" + " "+sub+" cm3"]*(+d.count/num_subjects); }),
+                    value_rh: d3.sum(file, function(d) { return +d["average_"+column+" "+"R"+ " "+sub +" cm3"]*(+d.count/num_subjects); }),
+                    max_lh: d3.max(file, function(d) { return +d["max_"+column+" "+"L"+ " "+sub +" cm3"]; }),
+                    max_rh: d3.max(file, function(d) { return +d["max_"+column+" "+"R" + " "+sub +" cm3"]; }),
+                    min_lh: d3.min(file, function(d) { return +d["min_"+column+" "+"L" + " "+sub +" cm3"]; }),
+                    min_rh: d3.min(file, function(d) { return +d["min_"+column+" "+"R"+ " "+sub +" cm3"]; }),
                 });
 
             });
 
 
         });
+        var b_average = d3.sum(file, function(d) { return +d["average_Brainstem cm3"]*(+d.count/num_subjects); });
+        var b_max = d3.max(file, function(d) { return +d["max_" + "Brainstem cm3"]; });
+        var b_min = d3.min(file, function(d) { return +d["min_" + "Brainstem cm3"]; });
         averages.push({
             key: "Brainstem*",
-            value_lh: d3.mean(file, function(d) { return +d["Brainstem cm3"]; }),
-            value_rh: d3.mean(file, function(d) { return +d["Brainstem cm3"]; }),
-            max_lh: d3.max(file, function(d) { return +d["Brainstem cm3"]; }),
-            max_rh: d3.max(file, function(d) { return +d["Brainstem cm3"]; }),
-            min_lh: d3.min(file, function(d) { return +d["Brainstem cm3"]; }),
-            min_rh: d3.min(file, function(d) { return +d["Brainstem cm3"]; }),
+            value_lh: b_average,
+            value_rh: b_average,
+            max_lh: b_max,
+            max_rh: b_max,
+            min_lh: b_min,
+            min_rh: b_min,
         });
-
 
         var columns2 = [ "Lateral ventricles", "Caudate", "Putamen", "Thalamus", "Globus Pallidus", "Hippocampus", "Amygdala", "Accumbens"];
         var averages_2 = [];
@@ -122,12 +145,12 @@ function fill_graph(option){
 
             averages_2.push({
                 key: column,
-                value_lh: d3.mean(file, function(d) { return +d[""+column+" "+"Left"+" cm3"]; }),
-                value_rh: d3.mean(file, function(d) { return +d[""+column+" "+"Right"+" cm3"]; }),
-                max_lh: d3.max(file, function(d) { return +d[""+column+" "+"Left"+" cm3"]; }),
-                max_rh: d3.max(file, function(d) { return +d[""+column+" "+"Right"+" cm3"]; }),
-                min_lh: d3.min(file, function(d) { return +d[""+column+" "+"Left"+" cm3"]; }),
-                min_rh: d3.min(file, function(d) { return +d[""+column+" "+"Right"+" cm3"]; }),
+                value_lh: d3.sum(file, function(d) { return +d["average_"+column+" "+"Left"+" cm3"]*(+d.count/num_subjects); }),
+                value_rh: d3.sum(file, function(d) { return +d["average_"+column+" "+"Right"+" cm3"]*(+d.count/num_subjects); }),
+                max_lh: d3.max(file, function(d) { return +d["max_"+column+" "+"Left"+" cm3"]; }),
+                max_rh: d3.max(file, function(d) { return +d["max_"+column+" "+"Right"+" cm3"]; }),
+                min_lh: d3.min(file, function(d) { return +d["min_"+column+" "+"Left"+" cm3"]; }),
+                min_rh: d3.min(file, function(d) { return +d["min_"+column+" "+"Right"+" cm3"]; }),
             });
 
         });
@@ -149,7 +172,7 @@ function fill_graph(option){
 
 var updating_data=false;
 function update_graph(option){
-    var file_name = "data/volBrain.csv";
+    var file_name = "data/volBrain_pre.csv";
 
 
     d3.queue()
@@ -177,12 +200,32 @@ function update_graph(option){
             }));
 
 
-        var ages =[];
+        /*var ages =[];
         file.forEach(function(v) {
             if((selections.gender==null || selections.gender.indexOf(g_conversor[v.Sex])>=0 ) &&
             ( selections.departments==null || selections.departments.indexOf(v.Department)>=0  ))
                 ages.push(v.Age);
-        });
+        });*/
+
+        var ages = d3.nest()
+            .key(function(d) { return d.Age;})
+            .sortKeys(function(a, b){return d3.ascending(+a, +b);})
+            .rollup(function(d) {
+                //return d.length;
+                return d3.sum(d, function(g) {return g.count; });
+            })
+            .entries(file.filter(function(v){
+                if((selections.gender==null || selections.gender.indexOf(g_conversor[v.Sex])>=0 ) &&
+                ( selections.departments==null || selections.departments.indexOf(v.Department)>=0  ))
+                    return v;
+            }))
+            .filter(function(v){if( !isNaN(v.key) ) return v;})
+            .map(function(group){
+                return {x0: parseInt(group.key),
+                        x1: parseInt(group.key) + 5,
+                        length: group.value};
+
+            });
 
 
         file=file.filter(function(v){
@@ -193,19 +236,23 @@ function update_graph(option){
             }
         });
 
-        var generic_columns = [ "Tissue GM", "Tissue WM", "Tissue CSF", "Tissue Brain", "Tissue IC"];
+        var num_subjects = d3.sum(file, function(d){ return +d.count;});
+
+        var generic_columns = ["Tissue GM", "Tissue WM", "Tissue CSF", "Tissue Brain", "Tissue IC"];
         var converter = {"Tissue WM":"White Matter(WM)", "Tissue GM":"Grey Matter (GM)", "Tissue CSF":"Cerebro Spinal Fluid", "Tissue Brain":"Brain (WM + GM)", "Tissue IC":"Intracranial Cavity"};
         var generic_averages=[];
         generic_columns.forEach(function(column) {
-
+            var ave = d3.sum(file, function(d) { return +d["average_"+column+" cm3"]*(+d.count/num_subjects); });
+            var max = d3.max(file, function(d) { return +d["max_"+column+" cm3"]; });
+            var min = d3.min(file, function(d) { return +d["min_"+column+" cm3"]; });
             generic_averages.push({
                 key: converter[column],
-                value_lh: d3.mean(file, function(d) { return +d[""+column+" cm3"]; }),
-                value_rh: d3.mean(file, function(d) { return +d[""+column+" cm3"]; }),
-                max_lh: d3.max(file, function(d) { return +d[""+column+" cm3"]; }),
-                max_rh: d3.max(file, function(d) { return +d[""+column+" cm3"]; }),
-                min_lh: d3.min(file, function(d) { return +d[""+column+" cm3"]; }),
-                min_rh: d3.min(file, function(d) { return +d[""+column+" cm3"]; }),
+                value_lh: ave,
+                value_rh: ave,
+                max_lh: max,
+                max_rh: max,
+                min_lh: min,
+                min_rh: min,
             });
 
         });
@@ -219,28 +266,30 @@ function update_graph(option){
             subcolumns.forEach(function(sub){
                 averages.push({
                     key: column+" "+sub,
-                    value_lh: d3.mean(file, function(d) { return +d[""+column+" "+"L" + " "+sub+" cm3"]; }),
-                    value_rh: d3.mean(file, function(d) { return +d[""+column+" "+"R"+ " "+sub +" cm3"]; }),
-                    max_lh: d3.max(file, function(d) { return +d[""+column+" "+"L"+ " "+sub +" cm3"]; }),
-                    max_rh: d3.max(file, function(d) { return +d[""+column+" "+"R" + " "+sub +" cm3"]; }),
-                    min_lh: d3.min(file, function(d) { return +d[""+column+" "+"L" + " "+sub +" cm3"]; }),
-                    min_rh: d3.min(file, function(d) { return +d[""+column+" "+"R"+ " "+sub +" cm3"]; }),
+                    value_lh: d3.sum(file, function(d) { return +d["average_"+column+" "+"L" + " "+sub+" cm3"]*(+d.count/num_subjects); }),
+                    value_rh: d3.sum(file, function(d) { return +d["average_"+column+" "+"R"+ " "+sub +" cm3"]*(+d.count/num_subjects); }),
+                    max_lh: d3.max(file, function(d) { return +d["max_"+column+" "+"L"+ " "+sub +" cm3"]; }),
+                    max_rh: d3.max(file, function(d) { return +d["max_"+column+" "+"R" + " "+sub +" cm3"]; }),
+                    min_lh: d3.min(file, function(d) { return +d["min_"+column+" "+"L" + " "+sub +" cm3"]; }),
+                    min_rh: d3.min(file, function(d) { return +d["min_"+column+" "+"R"+ " "+sub +" cm3"]; }),
                 });
 
             });
 
 
         });
+        var b_average = d3.sum(file, function(d) { return +d["average_Brainstem cm3"]*(+d.count/num_subjects); });
+        var b_max = d3.max(file, function(d) { return +d["max_" + "Brainstem cm3"]; });
+        var b_min = d3.min(file, function(d) { return +d["min_" + "Brainstem cm3"]; });
         averages.push({
             key: "Brainstem*",
-            value_lh: d3.mean(file, function(d) { return +d["Brainstem cm3"]; }),
-            value_rh: d3.mean(file, function(d) { return +d["Brainstem cm3"]; }),
-            max_lh: d3.max(file, function(d) { return +d["Brainstem cm3"]; }),
-            max_rh: d3.max(file, function(d) { return +d["Brainstem cm3"]; }),
-            min_lh: d3.min(file, function(d) { return +d["Brainstem cm3"]; }),
-            min_rh: d3.min(file, function(d) { return +d["Brainstem cm3"]; }),
+            value_lh: b_average,
+            value_rh: b_average,
+            max_lh: b_max,
+            max_rh: b_max,
+            min_lh: b_min,
+            min_rh: b_min,
         });
-
 
         var columns2 = [ "Lateral ventricles", "Caudate", "Putamen", "Thalamus", "Globus Pallidus", "Hippocampus", "Amygdala", "Accumbens"];
         var averages_2 = [];
@@ -249,15 +298,16 @@ function update_graph(option){
 
             averages_2.push({
                 key: column,
-                value_lh: d3.mean(file, function(d) { return +d[""+column+" "+"Left"+" cm3"]; }),
-                value_rh: d3.mean(file, function(d) { return +d[""+column+" "+"Right"+" cm3"]; }),
-                max_lh: d3.max(file, function(d) { return +d[""+column+" "+"Left"+" cm3"]; }),
-                max_rh: d3.max(file, function(d) { return +d[""+column+" "+"Right"+" cm3"]; }),
-                min_lh: d3.min(file, function(d) { return +d[""+column+" "+"Left"+" cm3"]; }),
-                min_rh: d3.min(file, function(d) { return +d[""+column+" "+"Right"+" cm3"]; }),
+                value_lh: d3.sum(file, function(d) { return +d["average_"+column+" "+"Left"+" cm3"]*(+d.count/num_subjects); }),
+                value_rh: d3.sum(file, function(d) { return +d["average_"+column+" "+"Right"+" cm3"]*(+d.count/num_subjects); }),
+                max_lh: d3.max(file, function(d) { return +d["max_"+column+" "+"Left"+" cm3"]; }),
+                max_rh: d3.max(file, function(d) { return +d["max_"+column+" "+"Right"+" cm3"]; }),
+                min_lh: d3.min(file, function(d) { return +d["min_"+column+" "+"Left"+" cm3"]; }),
+                min_rh: d3.min(file, function(d) { return +d["min_"+column+" "+"Right"+" cm3"]; }),
             });
 
         });
+
         //console.log(averages[0]);
 
 

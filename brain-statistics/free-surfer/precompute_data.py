@@ -9,6 +9,8 @@ parser.add_argument('output')
 parser.add_argument('--group', nargs='*', default=[])
 parser.add_argument('--continuos_group', nargs='*', default=[])
 parser.add_argument('--camps', nargs='*')
+parser.add_argument('--input_separator', default=',')
+parser.add_argument('--output_separator', default=',')
 
 args = parser.parse_args()
 
@@ -25,7 +27,9 @@ bins_interval = 5
 print (group_camps, continuos_group_camps, other_camps)
 
 with open(input_file_path, 'r') as inf:
-    reader = csv.DictReader(inf, delimiter=',', quoting=csv.QUOTE_NONE)
+    reader = csv.DictReader(inf,
+                            delimiter=args.input_separator,
+                            quoting=csv.QUOTE_NONE)
     for row in reader:
         key = []
         for c in group_camps:
@@ -66,7 +70,8 @@ with open(output_file_path, 'w') as ouf:
     writer = csv.DictWriter(ouf, fieldnames=group_camps
                             + continuos_group_camps
                             + gen
-                            + ["count"])
+                            + ["count"],
+                            delimiter=args.output_separator)
     writer.writeheader()
 
     for keys, values in dics.items():

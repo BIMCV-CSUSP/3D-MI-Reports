@@ -11,7 +11,7 @@ gender_donut.set_on_change( function(values){
 
 });
 
-var ages_hist = new Ages("#ages");
+var ages_hist = new BinnedHistogram("#ages");
 ages_hist.set_on_change(function(values){
     selections.ages=values;
     update_graph(null);
@@ -38,7 +38,7 @@ d3.selectAll("input[name='selector']")
     });
 
 function fill_graph(option){
-    var file_name = "data/CERES.csv";
+    var file_name = "data/CERES_pre.csv";
 
 
     d3.queue()
@@ -55,52 +55,69 @@ function fill_graph(option){
             .key(function(d) { return g_conversor[d.Sex];})
             .sortKeys(d3.ascending)
             .rollup(function(d) {
-                return d.length;
-                //return d3.sum(d, function(g) {return g.value; });
+                //return d.length;
+                return d3.sum(d, function(g) {return g.count; });
             })
             .entries(file);
 
-        var ages =[];
+        /*var ages =[];
         file.forEach(function(d) {
             ages.push(d.Age);
-        });
+        });*/
 
-        var columns = [ "I-II", "III", "IV", "VI", "Crus I", "Crus II", "VIIB", "VIIIA", "VIIIB", "IX", "X" ];
-        var names = {"I-II":"Lobules I,II", "III": "Lobule III", "IV": "Lobule IV", "VI": "Lobule VI", "Crus I": "Crus I" , "Crus II": "Crus II", "VIIB":"Lobule VIIB", "VIIIA":"Lobule VIIIA", "VIIIB":"Lobule VIIIB", "IX":"Lobule IX", "X":"Lobule X"};
+        var ages = d3.nest()
+            .key(function(d) { return d.Age;})
+            .sortKeys(function(a, b){return d3.ascending(+a, +b);})
+            .rollup(function(d) {
+                //return d.length;
+                return d3.sum(d, function(g) {return g.count; });
+            })
+            .entries(file)
+            .filter(function(v){if( !isNaN(v.key) ) return v;})
+            .map(function(group){
+                return {x0: parseInt(group.key),
+                        x1: parseInt(group.key) + 5,
+                        length: group.value};
+
+            });
+
+        var columns = [ "I-II", "III", "IV", "V", "VI", "Crus I", "Crus II", "VIIB", "VIIIA", "VIIIB", "IX", "X" ];
+        var names = {"I-II":"Lobules I,II", "III": "Lobule III", "IV": "Lobule IV", "V": "Lobule V", "VI": "Lobule VI", "Crus I": "Crus I" , "Crus II": "Crus II", "VIIB":"Lobule VIIB", "VIIIA":"Lobule VIIIA", "VIIIB":"Lobule VIIIB", "IX":"Lobule IX", "X":"Lobule X"};
         var averages = [];
         var averages_2 = [];
         var averages_3 = [];
 
+        var num_subjects = d3.sum(file, function(d){ return +d.count;});
 
         columns.forEach(function(column) {
             averages.push({
                 key: names[column],
-                value_lh: d3.mean(file, function(d) { return +d[""+column+" left "+"cm3"]; }),
-                value_rh: d3.mean(file, function(d) { return +d[""+column+" right "+"cm3"]; }),
-                max_lh: d3.max(file, function(d) { return +d[""+column+" left "+"cm3"]; }),
-                max_rh: d3.max(file, function(d) { return +d[""+column+" right "+"cm3"]; }),
-                min_lh: d3.min(file, function(d) { return +d[""+column+" left "+"cm3"]; }),
-                min_rh: d3.min(file, function(d) { return +d[""+column+" right "+"cm3"]; }),
+                value_lh: d3.sum(file, function(d) { return +d["average_"+column+" left "+"cm3"]*(+d.count/num_subjects); }),
+                value_rh: d3.sum(file, function(d) { return +d["average_"+column+" right "+"cm3"]*(+d.count/num_subjects); }),
+                max_lh: d3.max(file, function(d) { return +d["max_"+column+" left "+"cm3"]; }),
+                max_rh: d3.max(file, function(d) { return +d["max_"+column+" right "+"cm3"]; }),
+                min_lh: d3.min(file, function(d) { return +d["min_"+column+" left "+"cm3"]; }),
+                min_rh: d3.min(file, function(d) { return +d["min_"+column+" right "+"cm3"]; }),
             });
 
             averages_2.push({
                 key: names[column],
-                value_lh: d3.mean(file, function(d) { return +d[""+column+" left "+"grey matter cm3"]; }),
-                value_rh: d3.mean(file, function(d) { return +d[""+column+" right "+"grey matter cm3"]; }),
-                max_lh: d3.max(file, function(d) { return +d[""+column+" left "+"grey matter cm3"]; }),
-                max_rh: d3.max(file, function(d) { return +d[""+column+" right "+"grey matter cm3"]; }),
-                min_lh: d3.min(file, function(d) { return +d[""+column+" left "+"grey matter cm3"]; }),
-                min_rh: d3.min(file, function(d) { return +d[""+column+" right "+"grey matter cm3"]; }),
+                value_lh: d3.sum(file, function(d) { return +d["average_"+column+" left "+"grey matter cm3"]*(+d.count/num_subjects); }),
+                value_rh: d3.sum(file, function(d) { return +d["average_"+column+" right "+"grey matter cm3"]*(+d.count/num_subjects); }),
+                max_lh: d3.max(file, function(d) { return +d["max_"+column+" left "+"grey matter cm3"]; }),
+                max_rh: d3.max(file, function(d) { return +d["max_"+column+" right "+"grey matter cm3"]; }),
+                min_lh: d3.min(file, function(d) { return +d["min_"+column+" left "+"grey matter cm3"]; }),
+                min_rh: d3.min(file, function(d) { return +d["min_"+column+" right "+"grey matter cm3"]; }),
             });
 
             averages_3.push({
                 key: names[column],
-                value_lh: d3.mean(file, function(d) { return +d[""+column+" left "+"cortical thickness"]; }),
-                value_rh: d3.mean(file, function(d) { return +d[""+column+" right "+"cortical thickness"]; }),
-                max_lh: d3.max(file, function(d) { return +d[""+column+" left "+"cortical thickness"]; }),
-                max_rh: d3.max(file, function(d) { return +d[""+column+" right "+"cortical thickness"]; }),
-                min_lh: d3.min(file, function(d) { return +d[""+column+" left "+"cortical thickness"]; }),
-                min_rh: d3.min(file, function(d) { return +d[""+column+" right "+"cortical thickness"]; }),
+                value_lh: d3.sum(file, function(d) { return +d["average_"+column+" left "+"cortical thickness"]*(+d.count/num_subjects); }),
+                value_rh: d3.sum(file, function(d) { return +d["average_"+column+" right "+"cortical thickness"]*(+d.count/num_subjects); }),
+                max_lh: d3.max(file, function(d) { return +d["max_"+column+" left "+"cortical thickness"]; }),
+                max_rh: d3.max(file, function(d) { return +d["max_"+column+" right "+"cortical thickness"]; }),
+                min_lh: d3.min(file, function(d) { return +d["min_"+column+" left "+"cortical thickness"]; }),
+                min_rh: d3.min(file, function(d) { return +d["min_"+column+" right "+"cortical thickness"]; }),
             });
         });
 
@@ -121,7 +138,7 @@ var updating_data=false;
 function update_graph(option){
     if(updating_data) return; //check if not updating
 
-    var file_name = "data/CERES.csv";
+    var file_name = "data/CERES_pre.csv";
 
     updating_data = true; //mark as updating to avoid performance issues
 
@@ -140,8 +157,8 @@ function update_graph(option){
             .key(function(d) { return g_conversor[d.Sex];})
             //.sortKeys(function (a,b){return a-b;})
             .rollup(function(d) {
-                return d.length;
-                //return d3.sum(d, function(g) {return g.value; });
+                //return d.length;
+                return d3.sum(d, function(g) {return g.count; });
             })
             .sortKeys(d3.ascending)
             .entries(file.filter(function(v){
@@ -151,12 +168,30 @@ function update_graph(option){
             }));
 
 
-        var ages =[];
+        /*var ages =[];
         file.forEach(function(v) {
             if((selections.gender==null || selections.gender.indexOf(g_conversor[v.Sex])>=0 ) && ( selections.departments==null || selections.departments.indexOf(v.Department)>=0 ) )
                 ages.push(v.Age);
-        });
+        });*/
+        var ages = d3.nest()
+            .key(function(d) { return d.Age;})
+            .sortKeys(function(a, b){return d3.ascending(+a, +b);})
+            .rollup(function(d) {
+                //return d.length;
+                return d3.sum(d, function(g) {return g.count; });
+            })
+            .entries(file.filter(function(v){
+                if((selections.gender==null || selections.gender.indexOf(g_conversor[v.Sex])>=0 ) &&
+                ( selections.departments==null || selections.departments.indexOf(v.Department)>=0  ))
+                    return v;
+            }))
+            .filter(function(v){if( !isNaN(v.key) ) return v;})
+            .map(function(group){
+                return {x0: parseInt(group.key),
+                        x1: parseInt(group.key) + 5,
+                        length: group.value};
 
+            });
 
 
 
@@ -168,42 +203,44 @@ function update_graph(option){
             }
         });
 
-        var columns = [ "I-II", "III", "IV", "VI", "Crus I", "Crus II", "VIIB", "VIIIA", "VIIIB", "IX", "X" ];
-        var names = {"I-II":"Lobules I,II", "III": "Lobule III", "IV": "Lobule IV", "VI": "Lobule VI", "Crus I": "Crus I" , "Crus II": "Crus II", "VIIB":"Lobule VIIB", "VIIIA":"Lobule VIIIA", "VIIIB":"Lobule VIIIB", "IX":"Lobule IX", "X":"Lobule X"};
+        var columns = [ "I-II", "III", "IV", "V", "VI", "Crus I", "Crus II", "VIIB", "VIIIA", "VIIIB", "IX", "X" ];
+        var names = {"I-II":"Lobules I,II", "III": "Lobule III", "IV": "Lobule IV", "V": "Lobule V", "VI": "Lobule VI", "Crus I": "Crus I" , "Crus II": "Crus II", "VIIB":"Lobule VIIB", "VIIIA":"Lobule VIIIA", "VIIIB":"Lobule VIIIB", "IX":"Lobule IX", "X":"Lobule X"};
         var averages = [];
         var averages_2 = [];
         var averages_3 = [];
+
+        var num_subjects = d3.sum(file, function(d){ return +d.count;});
 
         columns.forEach(function(column) {
             columns.forEach(function(column) {
                 averages.push({
                     key: names[column],
-                    value_lh: d3.mean(file, function(d) { return +d[""+column+" left "+"cm3"]; }),
-                    value_rh: d3.mean(file, function(d) { return +d[""+column+" right "+"cm3"]; }),
-                    max_lh: d3.max(file, function(d) { return +d[""+column+" left "+"cm3"]; }),
-                    max_rh: d3.max(file, function(d) { return +d[""+column+" right "+"cm3"]; }),
-                    min_lh: d3.min(file, function(d) { return +d[""+column+" left "+"cm3"]; }),
-                    min_rh: d3.min(file, function(d) { return +d[""+column+" right "+"cm3"]; }),
+                    value_lh: d3.sum(file, function(d) { return +d["average_"+column+" left "+"cm3"]*(+d.count/num_subjects); }),
+                    value_rh: d3.sum(file, function(d) { return +d["average_"+column+" right "+"cm3"]*(+d.count/num_subjects); }),
+                    max_lh: d3.max(file, function(d) { return +d["max_"+column+" left "+"cm3"]; }),
+                    max_rh: d3.max(file, function(d) { return +d["max_"+column+" right "+"cm3"]; }),
+                    min_lh: d3.min(file, function(d) { return +d["min_"+column+" left "+"cm3"]; }),
+                    min_rh: d3.min(file, function(d) { return +d["min_"+column+" right "+"cm3"]; }),
                 });
 
                 averages_2.push({
                     key: names[column],
-                    value_lh: d3.mean(file, function(d) { return +d[""+column+" left "+"grey matter cm3"]; }),
-                    value_rh: d3.mean(file, function(d) { return +d[""+column+" right "+"grey matter cm3"]; }),
-                    max_lh: d3.max(file, function(d) { return +d[""+column+" left "+"grey matter cm3"]; }),
-                    max_rh: d3.max(file, function(d) { return +d[""+column+" right "+"grey matter cm3"]; }),
-                    min_lh: d3.min(file, function(d) { return +d[""+column+" left "+"grey matter cm3"]; }),
-                    min_rh: d3.min(file, function(d) { return +d[""+column+" right "+"grey matter cm3"]; }),
+                    value_lh: d3.sum(file, function(d) { return +d["average_"+column+" left "+"grey matter cm3"]*(+d.count/num_subjects); }),
+                    value_rh: d3.sum(file, function(d) { return +d["average_"+column+" right "+"grey matter cm3"]*(+d.count/num_subjects); }),
+                    max_lh: d3.max(file, function(d) { return +d["max_"+column+" left "+"grey matter cm3"]; }),
+                    max_rh: d3.max(file, function(d) { return +d["max_"+column+" right "+"grey matter cm3"]; }),
+                    min_lh: d3.min(file, function(d) { return +d["min_"+column+" left "+"grey matter cm3"]; }),
+                    min_rh: d3.min(file, function(d) { return +d["min_"+column+" right "+"grey matter cm3"]; }),
                 });
 
                 averages_3.push({
                     key: names[column],
-                    value_lh: d3.mean(file, function(d) { return +d[""+column+" left "+"cortical thickness"]; }),
-                    value_rh: d3.mean(file, function(d) { return +d[""+column+" right "+"cortical thickness"]; }),
-                    max_lh: d3.max(file, function(d) { return +d[""+column+" left "+"cortical thickness"]; }),
-                    max_rh: d3.max(file, function(d) { return +d[""+column+" right "+"cortical thickness"]; }),
-                    min_lh: d3.min(file, function(d) { return +d[""+column+" left "+"cortical thickness"]; }),
-                    min_rh: d3.min(file, function(d) { return +d[""+column+" right "+"cortical thickness"]; }),
+                    value_lh: d3.sum(file, function(d) { return +d["average_"+column+" left "+"cortical thickness"]*(+d.count/num_subjects); }),
+                    value_rh: d3.sum(file, function(d) { return +d["average_"+column+" right "+"cortical thickness"]*(+d.count/num_subjects); }),
+                    max_lh: d3.max(file, function(d) { return +d["max_"+column+" left "+"cortical thickness"]; }),
+                    max_rh: d3.max(file, function(d) { return +d["max_"+column+" right "+"cortical thickness"]; }),
+                    min_lh: d3.min(file, function(d) { return +d["min_"+column+" left "+"cortical thickness"]; }),
+                    min_rh: d3.min(file, function(d) { return +d["min_"+column+" right "+"cortical thickness"]; }),
                 });
             });
 
