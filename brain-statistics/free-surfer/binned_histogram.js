@@ -41,6 +41,7 @@ function BinnedHistogram(div){
     var g = svg.append('g');
 
 
+
     var x;
     var x_bins;
     var bins;
@@ -48,6 +49,41 @@ function BinnedHistogram(div){
 //        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var on_change = null;
+
+    x = d3.scaleLinear()
+        .rangeRound([margin.left, width-margin.right])
+        .domain([0,109]);
+
+    bins=Array.apply(null, Array(100/5)).map(function(d,i){return {x0:i*5, x1:i*5+5};});
+    selected=bins.map(function(v){return false;});
+
+    console.log(bins)
+
+    x_bins = d3.scaleQuantize()
+        .domain(x.domain())
+        .range(bins.map(function(d){return d.x0;}));
+
+    var colors = d3.scaleLinear()
+        .domain([0, bins.length/2,bins.length])
+        .range(["#DD5555", "#FFCC77","#99FF99"]);
+
+
+
+
+    g.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + (height-margin.bottom) + ")")
+        .style("fill","none")
+        .call(d3.axisBottom(x));
+
+    var y_axis = g.append("g")
+        .attr("class", "axis axis--y")
+        .attr("transform", "translate("+ margin.left +", 0)")
+        .style("fill","none");
+
+    var gBrush = svg.append("g")
+        .attr("class", "brush")
+        .call(brush);
 
     this.set_on_change = function(f){
         on_change = f;
@@ -67,19 +103,13 @@ function BinnedHistogram(div){
 
         var [min, max] = d3.extent(data);
 
-        x = d3.scaleLinear()
-            .rangeRound([margin.left, width-margin.right])
-            .domain([0,109]);
+
         bins = data;
         /*bins = d3.histogram()
             .domain(x.domain())
             .thresholds(x.ticks(20))
             (data);*/
-        selected=data.map(function(v){return false;});
 
-        x_bins = d3.scaleQuantize()
-            .domain(x.domain())
-            .range(data.map(function(d){return d.x0;}));
 
         var max_y = d3.max(data, function(d) { return d.length; });
 
@@ -87,21 +117,112 @@ function BinnedHistogram(div){
             .domain([0,max_y+max_y/3])
             .range([height-margin.bottom, margin.top]);
 
+        y_axis.call(d3.axisLeft(y).ticks(0));
+
         //console.log(bins)
-        var colors = d3.scaleLinear()
+        /*var colors = d3.scaleLinear()
             .domain([0, data.length/2,data.length])
             .range(["#DD5555", "#FFCC77","#99FF99"]);
+*/
 
-        var bar = g.selectAll(".bar")
-            .data(data)
-            .enter().append("g")
+
+
+
+
+    var bar = g.selectAll(".bar")
+        .data(bins, function(d){return d.x0;});
+
+    var new_bar = bar.enter().append("g")
+        .attr("class", "bar")
+        .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(0) + ")"; });
+
+    new_bar
+        .transition()
+        .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
+
+
+    new_bar.append("rect")
+        .attr("fill",function(d,i){return colors(i);})
+        .attr("x", 1)
+        .attr("width", function (d){return x(d.x1)-x(d.x0)-1;})
+        .attr("height", function (d){return 0;})
+        .transition()
+        .attr("height", function(d) { return height - y(d.length) - margin.bottom; });
+
+
+    new_bar.append("text")
+        .style("font", "10px sans-serif")
+        .attr("fill", "#666666")
+        .attr("dy", ".75em")
+        .attr("y", -12)
+        .attr("x", function (d){return (x(d.x1)-x(d.x0)-1)/2;})
+        .attr("text-anchor", "middle")
+        .text(function(d) { return formatCount(d.length); });
+
+    bar.exit().remove();
+
+    bar.transition()
+        .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
+
+    bar.select("rect")
+        .transition()
+        .attr("height", function(d) { return height - y(d.length) - margin.bottom; });
+
+    bar.select("text")
+        .transition()
+        .text(function(d) { return formatCount(d.length); });
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*var bar = g.selectAll(".bar")
+            .data(data, function(d){return d.x0;});
+
+
+        bar.enter()
+            .attr("transform", function(d) { return "translate(" + x(d.x0) + "," +  (height - height-margin.bottom - margin.bottom)  + ")"; });
+
+        bar.exit()
+            .attr("transform", function(d) { return "translate(" + 0 + "," + (y(0)) + ")"; })
+            .select("rect")
+            .attr("height 0");
+
+
+
+        bar.exit().select("text")
+            .transition()
+            .text("0");
+
+
+        bar.update().select("rect")
+            .attr("height", function(d) { return height - y(d.length) - margin.bottom; });
+
+        bar.update()
+            .transition()
+            .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
+
+        bar.select("text")
+            .transition()
+            .text(function(d) { return formatCount(d.length); });
+
+
+/*            .enter().append("g")
             .attr("class", "bar")
             .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
 
         bar.append("rect")
             .attr("fill",function(d,i){return colors(i);})
             .attr("x", 1)
-            .attr("width", function (d){return x(d.x1)-x(d.x0)-1;} /*x(bins[0].x1) - x(bins[0].x0)*/ )
+            .attr("width", function (d){return x(d.x1)-x(d.x0)-1;}  )
             .attr("height", function(d) { return height - y(d.length) - margin.bottom; });
 
         bar.append("text")
@@ -112,22 +233,7 @@ function BinnedHistogram(div){
             .attr("x", function (d){return (x(d.x1)-x(d.x0)-1)/2;})
             .attr("text-anchor", "middle")
             .text(function(d) { return formatCount(d.length); });
-
-        g.append("g")
-            .attr("class", "axis axis--x")
-            .attr("transform", "translate(0," + (height-margin.bottom) + ")")
-            .style("fill","none")
-            .call(d3.axisBottom(x));
-
-        g.append("g")
-            .attr("class", "axis axis--y")
-            .attr("transform", "translate("+ margin.left +", 0)")
-            .style("fill","none")
-            .call(d3.axisLeft(y).ticks(0));
-
-        var gBrush = g.append("g")
-            .attr("class", "brush")
-            .call(brush);
+*/
 
     };
 

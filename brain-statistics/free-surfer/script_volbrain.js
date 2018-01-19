@@ -315,7 +315,7 @@ function update_graph(option){
 
 
         gender_donut.fill(gender);
-        ages_hist.update(ages);
+        ages_hist.fill(ages);
 
         histogram.fill(generic_averages);
         part_histogram.fill(averages);

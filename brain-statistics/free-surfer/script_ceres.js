@@ -253,7 +253,7 @@ function update_graph(option){
 
 
         gender_donut.fill(gender);
-        ages_hist.update(ages);
+        ages_hist.fill(ages);
         part_histogram.fill(averages);
         part_histogram2.fill(averages_2);
         part_histogram3.fill(averages_3);
