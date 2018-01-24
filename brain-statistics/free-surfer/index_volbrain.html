@@ -10,31 +10,33 @@
 </head>
 <body>
     <div id="map_select_area">
-    <div id="brain_img">
-        <img class="center" src="volbrain.png" height="80%" />
-    </div>
-    <!--<div id="radio_form">
-        <div id="radio_buttons">
-            <input type="radio" value="area" id="area" name="selector" checked><label for="area">Area</label><input type="radio" value="volume" id="volume" name="selector"><label for="volume">Volume</label><input type="radio" value="thickness" id="thickness" name="selector"><label for="thickness">Thickness</label>
+        <div id="brain_img">
+            <img class="center" src="volbrain.png" height="80%" />
         </div>
-    </div>-->
-    <div id="map">
-    </div>
-
+        <!--<div id="radio_form">
+            <div id="radio_buttons">
+                <input type="radio" value="area" id="area" name="selector" checked><label for="area">Area</label><input type="radio" value="volume" id="volume" name="selector"><label for="volume">Volume</label><input type="radio" value="thickness" id="thickness" name="selector"><label for="thickness">Thickness</label>
+            </div>
+        </div>-->
+        <div id="map"></div>
+        <div style="height: 10%;"></div>
         <div id="download_button">
-
+            <form method="get" action="data/volBrain.csv">
+               <button type="submit">Download</button>
+            </form>
         </div>
 
     </div>
 
     <div id="charts">
-        <div class="volseparator"></div>
+
+        <div class="volchart_title"><span class="t1">Tissue clasification</span></div>
         <div id="volchart_1" class="volchart" ></div>
-        <div class="volseparator"></div>
+        <div class="volchart_title"><span class="t2">Macrostructures</span></div>
         <div id="volchart_2" class="volchart" ></div>
-        <div class="volseparator"></div>
+        <div class="volchart_title"><span class="t3">Subcortical structures</span></div>
         <div id="volchart_3" class="volchart"></div>
-        <div class="volseparator"></div>
+        <div class="volchart_title"></div>
         <div class="footer">*The brainstem values are total and not left/right </div>
     </div>
 

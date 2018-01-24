@@ -10,19 +10,22 @@
 </head>
 <body>
     <div id="map_select_area">
-    <div id="brain_img">
-        <img class="center" src="brain.png" height="80%" />
-    </div>
-    <div id="radio_form">
-        <div id="radio_buttons">
-            <input type="radio" value="area" id="area" name="selector" checked><label for="area">Area</label><input type="radio" value="volume" id="volume" name="selector"><label for="volume">Volume</label><input type="radio" value="thickness" id="thickness" name="selector"><label for="thickness">Thickness</label>
+        <div id="brain_img">
+            <img class="center" src="brain.png" height="80%" />
         </div>
-    </div>
-    <div id="map">
-    </div>
+        <div id="radio_form">
+            <div id="radio_buttons">
+                <input type="radio" value="area" id="area" name="selector" checked><label for="area">Area</label><input type="radio" value="volume" id="volume" name="selector"><label for="volume">Volume</label><input type="radio" value="thickness" id="thickness" name="selector"><label for="thickness">Thickness</label>
+            </div>
+        </div>
+        <div id="map">
+        </div>
 
+        <div style="height: 5%;"></div>
         <div id="download_button">
-
+            <form method="get" action="data/freesurfer.zip">
+               <button type="submit">Download</button>
+            </form>
         </div>
 
     </div>
