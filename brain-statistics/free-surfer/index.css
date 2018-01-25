@@ -80,13 +80,14 @@ label + input[type=radio] + label {
 
 #map{
     height: 60%;
-    position:relative;
-    z-index:-1;
+
 }
 
 #download_button{
     height: 10%;
     text-align: center;
+    position:relative;
+    z-index:123;
 }
 
 #charts{
