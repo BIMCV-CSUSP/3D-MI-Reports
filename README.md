@@ -15,7 +15,9 @@ We introduce a new concept of visualization in Medical Imaging biomarkers field 
 A graphical visualization for rapid view of brain statistics using three different programs: FreeSurfer, VolBrain and CERES
 
 [10K FreeSurfer](https://bimcv-csusp.github.io/3D-MI-Reports/brain-statistics/free-surfer/)
+
 [10k VolBrain](https://bimcv-csusp.github.io/3D-MI-Reports/brain-statistics/free-surfer/index_volbrain.html)
+
 [10k CERES](https://bimcv-csusp.github.io/3D-MI-Reports/brain-statistics/free-surfer/index_ceres.html)
 
 ## References
