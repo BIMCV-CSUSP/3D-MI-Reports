@@ -26,3 +26,53 @@ A graphical visualization for rapid view of brain statistics using three differe
 [2] Rojas, G.M., Gálvez, M., Cordovez, J., Margulies, D.S., Castellanos, F.X., Milham, M.P., (2011). 'Applications of Stereoscopic 3D in Morphometric and Functional Imaging', HBM 2011, Quebec City, Canada.
 
 [3] Rojas, G.M., Gálvez, M. (2013). 'Functional Connectivity Networks obtained using 10-20 EEG and 7 standard functional networks', HBM 2013, Seattle, USA.
+
+---
+
+## GitHub Pages Deployment
+
+This repository is configured for automatic static deployment using **GitHub Pages**.
+
+### Structure
+Root level `index.html` provides a simple navigation landing page linking to:
+
+- `brain-visualization/index.html`
+- `spine-visualization/index.html`
+- `brain-statistics/free-surfer/index.html` (and related variant pages `index_volbrain.html`, `index_ceres.html`)
+
+All asset/script references are relative; no leading slashes are used, so they work under the Pages subpath.
+
+### Workflow
+The GitHub Actions workflow `.github/workflows/deploy-pages.yml` publishes the entire repository contents to Pages on every push to the `master` branch.
+
+### First-time Activation
+1. Go to: Repository Settings → Pages.
+2. Set Source = GitHub Actions (should auto-detect after first successful run).
+3. After the workflow finishes, the site will be available at:
+	`https://<org-or-user>.github.io/3D-MI-Reports/`
+
+Direct links (assuming the BIMCV-CSUSP organization):
+- Root portal: https://bimcv-csusp.github.io/3D-MI-Reports/
+- Brain viewer: https://bimcv-csusp.github.io/3D-MI-Reports/brain-visualization/
+- Spine viewer: https://bimcv-csusp.github.io/3D-MI-Reports/spine-visualization/
+- FreeSurfer stats: https://bimcv-csusp.github.io/3D-MI-Reports/brain-statistics/free-surfer/
+
+### Local Preview
+Serve locally with any static server from the repository root, e.g.:
+
+```bash
+python3 -m http.server 8000
+# Then open http://localhost:8000/
+```
+
+### Adding New Demos
+1. Create a new folder at repository root (e.g., `new-demo/`).
+2. Add its own `index.html` and assets with relative paths.
+3. Link it from the root `index.html` grid.
+4. Commit & push; the workflow redeploys automatically.
+
+### Troubleshooting
+- If assets 404 on Pages but not locally: ensure paths are relative (`./webgl/lib/three.js` or `webgl/lib/three.js`, not `/webgl/...`).
+- Clear browser cache or use a hard reload (Ctrl+Shift+R) after redeployments.
+- Check Actions tab for any workflow failures.
+
