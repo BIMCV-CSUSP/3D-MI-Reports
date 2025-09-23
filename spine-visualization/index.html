@@ -15,12 +15,24 @@
 				margin: 0px;
 				overflow: hidden;
 			}
-
+			#panel-toggle{position:absolute;top:10px;right:10px;z-index:2000;background:rgba(0,0,0,0.65);color:#eee;border:1px solid #666;padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;backdrop-filter:blur(2px);}
+			#panel-toggle:focus{outline:2px solid #4cafef;}
+			/* Estado colapsado (aplicable a cualquier ancho) */
+			#segments-panel.collapsed{transform:translateX(105%);opacity:0;pointer-events:none;}
+			@media (max-width: 820px){
+				#segments-panel{width:80%;max-width:440px;max-height:70vh;transition:transform .3s ease, opacity .25s;}
+				/* Asegura que el botón quede visible aunque el panel esté fuera */
+				#panel-toggle{right:10px;}
+			}
+			/* Animación suave también en escritorio (sin moverlo) */
+			#segments-panel{transition:transform .3s ease;}
 		</style>
 	</head>
 <body>
 <!--contenedor del canvas!-->
 	<div id = "container"></div>
+
+	<button id="panel-toggle" aria-controls="segments-panel" aria-expanded="true" title="Mostrar / ocultar panel de segmentos">✕ Close</button>
 
 	<div id="segments-panel" style="position:absolute;top:10px;right:10px;width:260px;max-height:90vh;overflow:auto;
 	background:rgba(0,0,0,0.6);font:12px sans-serif;color:#eee;padding:10px 12px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,0.4);">
@@ -48,6 +60,34 @@
 	
 	<!--script-->
 	<script type="text/javascript" src="RV_Brain.js"></script>
+	<script>
+	(function(){
+		var panel = document.getElementById('segments-panel');
+		var toggle = document.getElementById('panel-toggle');
+		if(!panel || !toggle) return;
+		function sync(){
+			var collapsed = panel.classList.contains('collapsed');
+			toggle.textContent = collapsed ? '☰ Segments' : '✕ Close';
+			toggle.setAttribute('aria-expanded', !collapsed);
+		}
+		// Opcional: si quieres que siempre inicie colapsado (incluso escritorio) descomenta:
+		// panel.classList.add('collapsed');
+		sync();
+		toggle.addEventListener('click', function(){
+			panel.classList.toggle('collapsed');
+			sync();
+		});
+		// Reaccionar a rotación / resize para evitar estados raros
+		window.addEventListener('resize', function(){
+			if(window.innerWidth >= 820){
+				panel.classList.remove('collapsed');
+			} else if(!panel.classList.contains('collapsed')) {
+				// Mantén abierto si el usuario lo dejó abierto; no forzar cierre
+			}
+			sync();
+		});
+	})();
+	</script>
 	
 	<div id="legend" style="position:absolute;top:10px;left:10px;font:12px sans-serif;
 	background:rgba(0,0,0,0.55);color:#fff;padding:6px 8px;border-radius:4px;min-width:140px;display:none;">

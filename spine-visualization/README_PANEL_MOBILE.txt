@@ -1,0 +1,1 @@
+Notas rápidas: Se añadió soporte móvil para el panel de segmentos (desplegable). Ver index.html y RV_Brain.js modificaciones (botón #panel-toggle, clase .collapsed, media queries).
