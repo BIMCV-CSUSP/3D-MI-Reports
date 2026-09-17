@@ -29,6 +29,34 @@ A graphical visualization for rapid view of brain statistics using three differe
 
 ---
 
+## Visual system & shared viewer engine
+
+All pages share one look: the **Aura "Blueprint"** backdrop (dark lattice + cyan glow, `assets/theme.css`) and the
+institutional lock-up **Generalitat Valenciana · Fundació Fisabio · Imagen Biomédica e IA** (`assets/logos-*.png`).
+The logo lock-up is used as delivered by the communication office — white version on the dark backdrop, never
+recoloured, split or re-ordered (see *FS_I032 Convivència logo GVA + Fisabio*).
+
+The two 3D viewers are thin configurations on top of a common engine, `assets/mi-viewer.js` (three.js r78):
+
+| Feature | Notes |
+| --- | --- |
+| Auto-framing | Camera fits the loaded bounding box (portrait-aware) |
+| Anatomical presets | Anterior / Posterior / Left / Right / Superior / Inferior (`1`–`6`), animated transitions; the orbit axis is the patient's vertical axis so the model never rolls |
+| Structures panel | Visibility, opacity, colour, per-structure volume (cm³, from the closed mesh), frame (⌖), isolate (double-click), highlight (click, also by clicking the 3D model) |
+| Section plane | Sagittal / Coronal / Axial clipping with position slider and flip (`C`) |
+| Surface smoothing | Optional Taubin smoothing per structure — visual only, volumes are computed before smoothing |
+| Toolbar | Reset view (`R`), auto-rotate (`Space`), PNG screenshot, fullscreen (`F`) |
+| Loading | Progress overlay (files / bytes) — the spine case streams ~100 MB of STL |
+| Mobile | Panel becomes a bottom sheet, touch orbit/zoom/pan |
+
+### Adding a new case / viewer
+
+1. Copy `spine-visualization/` (STL) or `brain-visualization/` (VTK) to a new folder.
+2. Drop the meshes in and edit `app.js`: list the `segments` (name, colour, opacity, files) and declare the
+   **patient axes in model space** (`axes.left / posterior / superior`) — LPS exports (3D Slicer) use
+   `left:[1,0,0], posterior:[0,1,0], superior:[0,0,1]`; RAS exports use `left:[-1,0,0], posterior:[0,-1,0]`.
+3. Link it from the root `index.html` grid.
+
 ## GitHub Pages Deployment
 
 This repository is configured for automatic static deployment using **GitHub Pages**.
@@ -66,10 +94,7 @@ python3 -m http.server 8000
 ```
 
 ### Adding New Demos
-1. Create a new folder at repository root (e.g., `new-demo/`).
-2. Add its own `index.html` and assets with relative paths.
-3. Link it from the root `index.html` grid.
-4. Commit & push; the workflow redeploys automatically.
+See *Adding a new case / viewer* above; commit & push and the workflow redeploys automatically.
 
 ### Troubleshooting
 - If assets 404 on Pages but not locally: ensure paths are relative (`./webgl/lib/three.js` or `webgl/lib/three.js`, not `/webgl/...`).

@@ -2,53 +2,175 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>3D MI Reports / Demos</title>
+  <title>3D MI Reports</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Interactive 3D medical-imaging reports and population statistics dashboards by the Biomedical Imaging & AI group (Fisabio · Generalitat Valenciana)." />
+  <link rel="stylesheet" href="assets/theme.css" />
   <style>
-    :root { color-scheme: dark light; }
-    body { margin:0; font-family: system-ui, Arial, sans-serif; background:#111; color:#eee; }
-    header { padding:32px 20px 16px; text-align:center; }
-    h1 { margin:0 0 4px; font-size: clamp(1.6rem, 2.6vw, 2.4rem); letter-spacing:.5px; }
-    p.subtitle { margin:0; opacity:.7; }
-    main { max-width:1000px; margin:0 auto; padding:32px 20px 60px; }
-    .grid { display:grid; gap:22px; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); }
-    a.card { text-decoration:none; color:inherit; border:1px solid #2c2c2c; background:#1b1b1b; padding:18px 18px 20px; border-radius:14px; display:flex; flex-direction:column; position:relative; overflow:hidden; box-shadow:0 4px 12px -4px rgba(0,0,0,0.5); transition:.25s border-color,.25s transform,.25s background; }
-    a.card:hover { border-color:#3d7fff; transform:translateY(-4px); background:#222b38; }
-    a.card h2 { margin:0 0 10px; font-size:1.15rem; font-weight:600; letter-spacing:.5px; }
-    a.card p { margin:0; font-size:.85rem; line-height:1.35rem; opacity:.75; }
-    footer { text-align:center; font-size:.7rem; opacity:.55; padding:30px 10px; }
-    .tagline { font-size:.8rem; margin-top:6px; opacity:.55; }
-    .repo-link { position:absolute; top:12px; right:14px; font-size:.7rem; letter-spacing:.5px; background:#243041; color:#aac9ff; padding:4px 8px; border-radius:20px; }
-    @media (prefers-color-scheme: light) { body { background:#fafafa; color:#222; } a.card { background:#fff; border-color:#dedede; } a.card:hover { background:#f1f7ff; } .repo-link { background:#edf3fb; color:#265d9b; } }
+    body { min-height: 100vh; }
+    .page { min-height: 100vh; display: flex; flex-direction: column; padding-inline: 20px; }
+    .wrap { width: min(1080px, 100%); margin: 0 auto; }
+
+    .top {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding-block: 22px 8px;
+    }
+    .top .brand-bar img { height: 44px; }
+    .top .gh {
+      color: var(--fg-muted); text-decoration: none; font-size: 12px;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px;
+      background: rgba(255,255,255,0.03); transition: color .15s, border-color .15s;
+    }
+    .top .gh:hover { color: var(--fg); border-color: var(--line-strong); }
+    .top .gh svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .hero { padding-block: 56px 36px; max-width: 720px; }
+    .hero .eyebrow { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--brand-blue-hi); margin-bottom: 14px; }
+    .hero h1 { margin: 0 0 14px; font-size: clamp(2rem, 4.2vw, 3.2rem); line-height: 1.05; letter-spacing: -0.02em; font-weight: 650; }
+    .hero h1 em { font-style: normal; color: var(--brand-cyan); }
+    .hero p { margin: 0; font-size: clamp(.98rem, 1.3vw, 1.08rem); line-height: 1.6; color: var(--fg-muted); max-width: 60ch; }
+
+    .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); padding-bottom: 48px; }
+    .card {
+      position: relative; display: flex; flex-direction: column; gap: 14px;
+      padding: 22px 22px 20px; border-radius: 16px;
+      border: 1px solid var(--line); background: var(--glass);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      color: inherit; overflow: hidden;
+      transition: transform .25s ease, border-color .25s, box-shadow .25s;
+      box-shadow: 0 10px 30px -20px rgba(0,0,0,.8);
+    }
+    /* stretched link: the whole card is clickable, extra links stay independent */
+    .card-link { color: inherit; text-decoration: none; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+    .card-link::before { content: ""; position: absolute; inset: 0; z-index: 1; }
+    .card:focus-within { outline: 2px solid var(--brand-blue-hi); outline-offset: 3px; }
+    .card-link:focus-visible { outline: none; }
+    .card::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+      background: radial-gradient(420px 200px at 20% 0%, rgba(56,112,224,.22), transparent 70%);
+      transition: opacity .25s;
+    }
+    .card:hover { transform: translateY(-4px); border-color: rgba(106,149,255,.55); box-shadow: 0 24px 40px -24px rgba(56,112,224,.5); }
+    .card:hover::after { opacity: 1; }
+    .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card-icon {
+      width: 46px; height: 46px; border-radius: 12px; flex: none;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, rgba(56,112,224,.35), rgba(6,182,212,.18));
+      border: 1px solid rgba(106,149,255,.35);
+    }
+    .card-icon svg { width: 24px; height: 24px; fill: none; stroke: #dfe9ff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .tag { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-faint); border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px; white-space: nowrap; }
+    .card h2 { margin: 0; font-size: 1.12rem; font-weight: 620; letter-spacing: -0.005em; }
+    .card p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--fg-muted); flex: 1; }
+    .card .meta { display: flex; flex-wrap: wrap; gap: 6px; }
+    .card .meta span { font-size: 11px; color: var(--fg-faint); background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; }
+    .card .cta { font-size: 12px; color: var(--brand-blue-hi); display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; }
+    .card .cta svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; transition: transform .2s; }
+    .card:hover .cta svg { transform: translateX(3px); }
+    .card .alt { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 2px; position: relative; z-index: 2; font-size: 11px; color: var(--fg-faint); }
+    .card .alt a { font-size: 11px; color: var(--fg-muted); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 4px 9px; transition: color .15s, border-color .15s; }
+    .card .alt a:hover { color: var(--fg); border-color: var(--line-strong); }
+
+    footer {
+      margin-top: auto; padding-block: 26px 28px;
+      border-top: 1px solid var(--line);
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px;
+    }
+    footer .credits { font-size: 12px; color: var(--fg-faint); line-height: 1.6; max-width: 56ch; }
+    footer .credits a { color: var(--fg-muted); text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+    footer .credits a:hover { color: var(--fg); }
+    footer .brand-bar img { height: 38px; }
+
+    @media (max-width: 640px) {
+      .hero { padding-block: 36px 26px; }
+      .top .brand-bar img { height: 30px; }
+      footer .brand-bar img { height: 28px; }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>3D MI Reports</h1>
-    <p class="subtitle">Interactive medical imaging visualizations & statistics</p>
-    <div class="tagline">Brain & Spine 3D viewers · FreeSurfer statistics dashboards</div>
-  </header>
-  <main>
-    <div class="grid">
-      <a class="card" href="brain-visualization/index.html">
-        <span class="repo-link">three.js</span>
-        <h2>Brain 3D Visualization</h2>
-        <p>Interactive brain surface / tumor / edema rendering (VTK based) with camera controls.</p>
+  <div class="aura" aria-hidden="true">
+    <div class="aura-layer-1"></div>
+    <div class="aura-layer-2"></div>
+    <div class="aura-layer-3"></div>
+  </div>
+
+  <div class="page above">
+    <header class="wrap top">
+      <div class="brand-bar">
+        <img src="assets/logos-white.png" alt="Generalitat Valenciana · Fundació Fisabio · Imagen Biomédica e IA" />
+      </div>
+      <a class="gh" href="https://github.com/BIMCV-CSUSP/3D-MI-Reports" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        Source
       </a>
-      <a class="card" href="spine-visualization/index.html">
-        <span class="repo-link">three.js</span>
-        <h2>Spine Segments Viewer</h2>
-        <p>Segmented spine anatomy (STL) with per-segment visibility, opacity & color controls.</p>
-      </a>
-      <a class="card" href="brain-statistics/free-surfer/index.html">
-        <span class="repo-link">d3.js</span>
-        <h2>FreeSurfer Statistics</h2>
-        <p>D3 charts: cortical area / volume / thickness, distributions, and region map.</p>
-      </a>
-    </div>
-  </main>
-  <footer>
-    <div>© 2025 Biomedical Imaging (BIMCV-CSUSP) · Static demo site</div>
-  </footer>
+    </header>
+
+    <main class="wrap">
+      <section class="hero">
+        <div class="eyebrow">Biomedical Imaging &amp; AI · Fisabio</div>
+        <h1>3D medical imaging reports, <em>in the browser</em>.</h1>
+        <p>Interactive prototypes for exploring segmented anatomy and population statistics directly from a link or a QR code — no software to install, works on phones and tablets.</p>
+      </section>
+
+      <section class="grid" aria-label="Demos">
+        <article class="card"><a class="card-link" href="brain-visualization/index.html">
+          <div class="card-head">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M9.5 3.5a3 3 0 0 0-3 3 3 3 0 0 0-2.5 4.5 3 3 0 0 0 1 5.5A3 3 0 0 0 9.5 20h.5V3.5zM14.5 3.5a3 3 0 0 1 3 3 3 3 0 0 1 2.5 4.5 3 3 0 0 1-1 5.5 3 3 0 0 1-4.5 3.5H14V3.5z"/><path d="M12 3v18"/></svg>
+            </div>
+            <span class="tag">three.js · VTK</span>
+          </div>
+          <h2>Brain 3D Report</h2>
+          <p>Cortical surface with a segmented glial tumour and its peritumoural edema. Anatomical views, section planes, per-structure opacity and mesh volumes.</p>
+          <div class="meta"><span>Tumour 8.4 cm³</span><span>Edema 108 cm³</span><span>3 surfaces</span></div>
+          <span class="cta">Open viewer <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a></article>
+
+        <article class="card"><a class="card-link" href="spine-visualization/index.html">
+          <div class="card-head">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="3.2" rx="1.2"/><rect x="9" y="8" width="6" height="3.2" rx="1.2"/><rect x="9" y="13" width="6" height="3.2" rx="1.2"/><rect x="9" y="18" width="6" height="3.2" rx="1.2"/><path d="M12 6.2v1.8M12 11.2v1.8M12 16.2v1.8"/></svg>
+            </div>
+            <span class="tag">three.js · STL</span>
+          </div>
+          <h2>Spine Segments Viewer</h2>
+          <p>Thoraco-lumbar MRI segmentation: vertebrae, discs, spinal cord and canal, vessels, muscle and fat compartments with visibility, opacity and colour controls.</p>
+          <div class="meta"><span>7 tissue groups</span><span>13 meshes</span><span>~100 MB</span></div>
+          <span class="cta">Open viewer <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a></article>
+
+        <article class="card"><a class="card-link" href="brain-statistics/free-surfer/index.html">
+          <div class="card-head">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 20h16"/><rect x="5" y="11" width="3" height="7" rx=".8"/><rect x="10.5" y="6" width="3" height="12" rx=".8"/><rect x="16" y="9" width="3" height="9" rx=".8"/></svg>
+            </div>
+            <span class="tag">d3.js</span>
+          </div>
+          <h2>Brain Statistics · 10k</h2>
+          <p>Population dashboards of cortical area, volume and thickness with interactive filtering by sex, age and health department.</p>
+          <div class="meta"><span>FreeSurfer</span><span>VolBrain</span><span>CERES</span></div>
+          <span class="cta">Open FreeSurfer dashboard <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+          <div class="alt">Also:
+            <a href="brain-statistics/free-surfer/index_volbrain.html">VolBrain</a>
+            <a href="brain-statistics/free-surfer/index_ceres.html">CERES</a>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <div class="credits">
+        Imagen Biomédica e IA · Fundació Fisabio · Generalitat Valenciana.<br/>
+        Originally developed at the Centre of Excellence and Technological Innovation in Bioimaging (CEIB). Static demo site — sample data only, no patient-identifying information.
+      </div>
+      <div class="brand-bar">
+        <img src="assets/logos-white.png" alt="Generalitat Valenciana · Fundació Fisabio · Imagen Biomédica e IA" />
+      </div>
+    </footer>
+  </div>
 </body>
 </html>

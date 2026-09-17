@@ -253,3 +253,27 @@ g.hoverable rect:hover {
     text-align:center;
     font-size: 9px;
 }
+
+/* ---- shared dark theme integration (assets/theme.css) ---- */
+body { background-color: var(--bg); color: var(--fg); }
+#map_select_area, #charts, #select_area { position: relative; z-index: 1; }
+text { fill: var(--fg-muted); }
+label { color: var(--fg-muted); }
+input[type=radio]:checked + label { color: var(--fg); border-bottom-color: var(--brand-blue-hi); }
+.cerchart_title span, .volchart_title .t1, .volchart_title .t2, .volchart_title .t3 { color: var(--fg); }
+.footer { color: var(--fg-faint); }
+#download_button button {
+    appearance: none; border: 1px solid var(--line); background: rgba(255,255,255,0.04); color: var(--fg);
+    font: 500 12px/1 var(--font); padding: 8px 14px; border-radius: 8px; cursor: pointer;
+}
+#download_button button:hover { background: var(--hover); border-color: var(--line-strong); }
+.portal-link {
+    position: fixed; top: 12px; right: 14px; z-index: 5;
+    color: var(--fg-muted); text-decoration: none; font-size: 12px;
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.portal-link:hover { color: var(--fg); border-color: var(--line-strong); }
+.portal-link svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; }
+.stats-brand { position: fixed; left: 14px; bottom: 10px; z-index: 5; }
+.stats-brand img { height: 26px; opacity: 0.85; }

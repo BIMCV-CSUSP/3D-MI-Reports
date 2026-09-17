@@ -1,98 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <title>Spine Segments Visualizer</title>
-        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"> 
-
-
-		<style >
-			body{
-				font-family: Monospace;
-				background-color: #fff;
-				color: #fff;
-				margin: 0px;
-				overflow: hidden;
-			}
-			#panel-toggle{position:absolute;top:10px;right:10px;z-index:2000;background:rgba(0,0,0,0.65);color:#eee;border:1px solid #666;padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;backdrop-filter:blur(2px);}
-			#panel-toggle:focus{outline:2px solid #4cafef;}
-			/* Estado colapsado (aplicable a cualquier ancho) */
-			#segments-panel.collapsed{transform:translateX(105%);opacity:0;pointer-events:none;}
-			@media (max-width: 820px){
-				#segments-panel{width:80%;max-width:440px;max-height:70vh;transition:transform .3s ease, opacity .25s;}
-				/* Asegura que el botón quede visible aunque el panel esté fuera */
-				#panel-toggle{right:10px;}
-			}
-			/* Animación suave también en escritorio (sin moverlo) */
-			#segments-panel{transition:transform .3s ease;}
-		</style>
-	</head>
-<body>
-<!--contenedor del canvas!-->
-	<div id = "container"></div>
-
-	<button id="panel-toggle" aria-controls="segments-panel" aria-expanded="true" title="Mostrar / ocultar panel de segmentos">✕ Close</button>
-
-	<div id="segments-panel" style="position:absolute;top:10px;right:10px;width:260px;max-height:90vh;overflow:auto;
-	background:rgba(0,0,0,0.6);font:12px sans-serif;color:#eee;padding:10px 12px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,0.4);">
-		<div style="font-weight:bold;font-size:14px;margin-bottom:6px;">Segments</div>
-		<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
-			<button id="btn-reset-all" style="flex:1 1 auto;background:#444;color:#eee;border:1px solid #666;padding:4px 6px;border-radius:4px;cursor:pointer;">Reset All</button>
-		</div>
-		<div id="segments-rows"></div>
-		<hr style="border:none;border-top:1px solid #333;margin:8px 0;"/>
-		<!-- Mensaje de selección removido -->
+<head>
+	<meta charset="utf-8"/>
+	<title>Spine Segments Viewer · 3D MI Reports</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="description" content="Interactive 3D viewer of a segmented lumbar-thoracic spine: bone, discs, spinal cord, muscle, fat and vessels.">
+	<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="viewer-body">
+	<!-- Aura background: layers blend against the body colour -->
+	<div class="aura" aria-hidden="true">
+		<div class="aura-layer-1"></div>
+		<div class="aura-layer-2"></div>
+		<div class="aura-layer-3"></div>
 	</div>
 
-	<!--Librerias auxiliares (c)"WebGL Programing Guide"-->
+	<!-- WebGL canvas host -->
+	<div id="viewer"></div>
 
+	<header class="viewer-header">
+		<a class="home" href="../index.html" title="Back to the portal">
+			<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Portal
+		</a>
+		<div class="viewer-title">
+			<span class="eyebrow">3D MI Reports</span>
+			<h1>Spine Segments Viewer</h1>
+		</div>
+	</header>
+
+	<button id="panel-toggle" class="btn panel-toggle" type="button" aria-controls="panel" aria-expanded="true" hidden>Structures</button>
+
+	<aside id="panel" class="panel" aria-label="Viewer controls">
+		<div class="panel-head">
+			<h2>Controls</h2>
+			<button id="panel-close" class="btn" type="button" aria-label="Hide panel">Hide <kbd>H</kbd></button>
+		</div>
+		<div id="panel-body" class="panel-scroll"></div>
+	</aside>
+
+	<div id="toolbar" class="toolbar" role="toolbar" aria-label="Viewer actions"></div>
+
+	<div class="hint">Drag to rotate · Scroll to zoom · Right-drag to pan · Click a structure to highlight · <kbd>1</kbd>–<kbd>6</kbd> views</div>
+
+	<footer class="viewer-footer">
+		<div class="brand-bar">
+			<img src="../assets/logos-white.png" alt="Generalitat Valenciana · Fundació Fisabio · Imagen Biomédica e IA">
+		</div>
+	</footer>
+
+	<div id="pick-tip" class="pick-tip" role="status" aria-live="polite"></div>
+
+	<div id="loading" class="loading" role="status" aria-live="polite">
+		<div class="loading-card">
+			<div class="spinner" aria-hidden="true"></div>
+			<div class="title">Loading spine segmentation</div>
+			<div id="loading-status" class="status">…</div>
+			<div class="bar"><div id="loading-bar"></div></div>
+			<div id="loading-error" class="error"></div>
+		</div>
+	</div>
 
 	<script src="webgl/lib/three.js"></script>
-	<script src="webgl/lib/controls/TrackballControls.js"></script>
-	<script src="webgl/lib/VTKLoader.js"></script>
+	<script src="webgl/lib/controls/OrbitControls.js"></script>
 	<script src="webgl/lib/STLLoader.js"></script>
-	<script src="webgl/lib/stats.min.js"></script> 
-	<script src="webgl/lib/Detector.js"></script> 
-	<script src = "webgl/lib/dat.gui.min.js"></script>
-	
-		<!-- Fuentes -->
-	
-	<!--script-->
-	<script type="text/javascript" src="RV_Brain.js"></script>
-	<script>
-	(function(){
-		var panel = document.getElementById('segments-panel');
-		var toggle = document.getElementById('panel-toggle');
-		if(!panel || !toggle) return;
-		function sync(){
-			var collapsed = panel.classList.contains('collapsed');
-			toggle.textContent = collapsed ? '☰ Segments' : '✕ Close';
-			toggle.setAttribute('aria-expanded', !collapsed);
-		}
-		// Opcional: si quieres que siempre inicie colapsado (incluso escritorio) descomenta:
-		// panel.classList.add('collapsed');
-		sync();
-		toggle.addEventListener('click', function(){
-			panel.classList.toggle('collapsed');
-			sync();
-		});
-		// Reaccionar a rotación / resize para evitar estados raros
-		window.addEventListener('resize', function(){
-			if(window.innerWidth >= 820){
-				panel.classList.remove('collapsed');
-			} else if(!panel.classList.contains('collapsed')) {
-				// Mantén abierto si el usuario lo dejó abierto; no forzar cierre
-			}
-			sync();
-		});
-	})();
-	</script>
-	
-	<div id="legend" style="position:absolute;top:10px;left:10px;font:12px sans-serif;
-	background:rgba(0,0,0,0.55);color:#fff;padding:6px 8px;border-radius:4px;min-width:140px;display:none;">
-		<div style="font-weight:bold;margin-bottom:4px;">Legend</div>
-		<!-- Items dinámicos insertados por RV_Brain.js -->
-	</div>
+	<script src="../assets/mi-viewer.js"></script>
+	<script src="app.js"></script>
 </body>
 </html>
