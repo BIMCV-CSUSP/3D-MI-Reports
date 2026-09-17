@@ -489,7 +489,7 @@ kbd {
     top: auto;
     right: 12px; left: 12px; bottom: 64px;
     width: auto;
-    max-height: 52vh;
+    max-height: 46vh;
   }
   .panel.collapsed { transform: translateY(calc(100% + 80px)); }
   .viewer-footer { bottom: 12px; left: 12px; }

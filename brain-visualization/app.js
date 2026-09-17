@@ -16,10 +16,11 @@
     panel: document.getElementById('panel'),
     openButton: document.getElementById('panel-toggle'),
     closeButton: document.getElementById('panel-close'),
-    label: 'Structures'
+    label: 'Structures',
+    onChange: function () { if (window.miViewer) window.miViewer.updateInset(); }
   });
 
-  window.viewer = MIViewer.create({
+  window.miViewer = MIViewer.create({
     container: document.getElementById('viewer'),
     panelBody: document.getElementById('panel-body'),
     toolbar: document.getElementById('toolbar'),
@@ -31,6 +32,7 @@
       error: document.getElementById('loading-error')
     },
     onTogglePanel: togglePanel,
+    panelElement: document.getElementById('panel'),
     loader: 'vtk',
     basePath: '',
     scale: 1,
@@ -44,8 +46,8 @@
     // stays visible; the tumour core is opaque, the edema a soft halo.
     segments: [
       { key: 'tumor', name: 'Tumour',      color: '#ff3b3b', opacity: 1.0,  renderOrder: 0, files: ['tumor.vtk'], smooth: 3 },
-      { key: 'edema', name: 'Edema',       color: '#3d8bff', opacity: 0.55, renderOrder: 1, files: ['edema.vtk'], smooth: 3 },
-      { key: 'brain', name: 'Brain',       color: '#f2efe9', opacity: 0.35, renderOrder: 2, files: ['cerebro.vtk'], roughness: 0.75, smooth: 2 }
+      { key: 'edema', name: 'Edema',       color: '#3d8bff', opacity: 0.75, renderOrder: 1, files: ['edema.vtk'], smooth: 3 },
+      { key: 'brain', name: 'Brain',       color: '#f2efe9', opacity: 0.5, renderOrder: 2, files: ['cerebro.vtk'], smooth: 2 }
     ],
 
     infoTitle: 'Case',

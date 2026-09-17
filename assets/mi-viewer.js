@@ -15,7 +15,8 @@
  *     defaultView:'oblique',            // preset key, or a [x,y,z] direction
  *     segments:   [{ key, name, color, opacity, visible, renderOrder, smooth, files:[...] }],
  *                 // smooth: Taubin iterations applied to the surface (visual only)
- *     info:       HTML string (optional)
+ *     info:       HTML string (optional),
+ *     panelElement: HTMLElement        // bottom sheet on mobile -> canvas inset
  *   });
  *
  * Patient axes are expressed in model space so the anatomical view presets
@@ -142,6 +143,7 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);          // transparent: the aura shows through
+    renderer.gammaInput = true;                  // hex colours are sRGB
     renderer.gammaOutput = true;
     renderer.sortObjects = true;
     container.appendChild(renderer.domElement);
@@ -163,20 +165,20 @@
 
     /* Lighting: sky/ground hemisphere + key light riding with the camera +
        a soft rim from behind so silhouettes separate from the backdrop. */
-    scene.add(new THREE.HemisphereLight(0xdfe9ff, 0x2a2420, 0.75));
-    var key = new THREE.DirectionalLight(0xffffff, 0.85);
-    key.position.set(0.6, 0.8, 1).normalize().multiplyScalar(10);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8078, 0.9));
+    var key = new THREE.DirectionalLight(0xffffff, 0.7);
+    key.position.set(0.5, 0.7, 1).normalize().multiplyScalar(10);
     camera.add(key);
-    var rim = new THREE.DirectionalLight(0x8fb6ff, 0.35);
-    rim.position.set(-1, -0.4, -1).normalize().multiplyScalar(10);
-    camera.add(rim);
+    var fill = new THREE.DirectionalLight(0xffffff, 0.25);
+    fill.position.set(-1, -0.3, -0.6).normalize().multiplyScalar(10);
+    camera.add(fill);
 
     /* ---------------- state ---------------- */
     var segments = cfg.segments.map(function (s, i) {
       var mat = new THREE.MeshStandardMaterial({
         color: new THREE.Color(s.color),
         side: THREE.DoubleSide,
-        roughness: s.roughness !== undefined ? s.roughness : 0.6,
+        roughness: s.roughness !== undefined ? s.roughness : 0.9,   // matte, clay-like
         metalness: 0.0,
         transparent: true,
         opacity: s.opacity !== undefined ? s.opacity : 1
@@ -214,7 +216,7 @@
     }
     function finishLoading() {
       if (!overlay) return;
-      overlay.root.classList.add('done');
+      setTimeout(function () { overlay.root.classList.add('done'); }, failed ? 2500 : 0);
     }
 
     /* ---------------- geometry loading ---------------- */
@@ -265,21 +267,34 @@
       if (typeof cfg.onLoaded === 'function') cfg.onLoaded(api);
     }
 
+    var RETRIES = 3;
+    function loadFile(seg, file, attempt) {
+      var url = (cfg.basePath || '') + file;
+      makeLoader().load(url, function (geometry) { onFileLoaded(seg, geometry); },
+        function (ev) {
+          if (ev && ev.lengthComputable) { bytesLoaded[url] = ev.loaded; bytesTotal[url] = ev.total; updateLoading(); }
+          else if (ev && ev.loaded) { bytesLoaded[url] = ev.loaded; updateLoading(); }
+        },
+        function () {
+          if (attempt < RETRIES) {
+            if (overlay) overlay.status.textContent = 'Retrying ' + file + ' (' + (attempt + 1) + '/' + RETRIES + ')…';
+            setTimeout(function () { loadFile(seg, file, attempt + 1); }, 800 * attempt);
+            return;
+          }
+          failed = true;
+          total--;                                   // let the rest of the scene finish
+          if (overlay) {
+            overlay.error.style.display = 'block';
+            overlay.error.textContent += (overlay.error.textContent ? ' · ' : '') + 'Could not load ' + file;
+          }
+          updateLoading();
+          if (loaded === total) onAllLoaded();
+        });
+    }
+
     function loadAll() {
       segments.forEach(function (seg) {
-        seg.files.forEach(function (file) {
-          var url = (cfg.basePath || '') + file;
-          var loader = makeLoader();
-          loader.load(url, function (geometry) { onFileLoaded(seg, geometry); },
-            function (ev) {
-              if (ev && ev.lengthComputable) { bytesLoaded[url] = ev.loaded; bytesTotal[url] = ev.total; updateLoading(); }
-              else if (ev && ev.loaded) { bytesLoaded[url] = ev.loaded; updateLoading(); }
-            },
-            function () {
-              failed = true;
-              if (overlay) { overlay.error.style.display = 'block'; overlay.error.textContent = 'Could not load ' + file; }
-            });
-        });
+        seg.files.forEach(function (file) { loadFile(seg, file, 1); });
       });
       updateLoading();
     }
@@ -685,7 +700,24 @@
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
     }
-    window.addEventListener('resize', resize);
+
+    /* On narrow screens the panel is a bottom sheet: shrink the canvas to the
+       area above it and re-frame, so the open panel never hides the model. */
+    var insetPx = 0;
+    function updateInset(animate) {
+      var p = cfg.panelElement;
+      var open = p && !p.classList.contains('collapsed') && window.innerWidth < 820;
+      var px = open ? Math.min(window.innerHeight * 0.6, p.offsetHeight + 72) : 0;
+      if (px === insetPx) return;
+      insetPx = px;
+      container.style.bottom = px + 'px';
+      resize();
+      if (!bounds.isEmpty()) {
+        var dir = camera.position.clone().sub(controls.target).normalize();
+        applyFrame(frameFor(bounds, dir), animate !== false);
+      }
+    }
+    window.addEventListener('resize', function () { resize(); updateInset(false); });
 
     function tick(now) {
       requestAnimationFrame(tick);
@@ -709,7 +741,8 @@
       scene: scene, camera: camera, renderer: renderer, controls: controls,
       segments: segments, bounds: bounds,
       goToView: goToView, focusSegment: focusSegment, select: setSelected,
-      resetSegments: resetSegments, screenshot: screenshot, toggleAutoRotate: toggleAutoRotate
+      resetSegments: resetSegments, screenshot: screenshot, toggleAutoRotate: toggleAutoRotate,
+      updateInset: updateInset
     };
     return api;
   }
@@ -729,6 +762,7 @@
       var collapse = force !== undefined ? force : !isCollapsed();
       p.classList.toggle('collapsed', collapse);
       sync();
+      if (typeof opts.onChange === 'function') opts.onChange(collapse);
     }
     open.innerHTML = ICONS.menu + (opts.label || 'Controls');
     open.addEventListener('click', function () { toggle(false); });

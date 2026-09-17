@@ -16,10 +16,11 @@
     panel: document.getElementById('panel'),
     openButton: document.getElementById('panel-toggle'),
     closeButton: document.getElementById('panel-close'),
-    label: 'Structures'
+    label: 'Structures',
+    onChange: function () { if (window.miViewer) window.miViewer.updateInset(); }
   });
 
-  window.viewer = MIViewer.create({
+  window.miViewer = MIViewer.create({
     container: document.getElementById('viewer'),
     panelBody: document.getElementById('panel-body'),
     toolbar: document.getElementById('toolbar'),
@@ -31,6 +32,7 @@
       error: document.getElementById('loading-error')
     },
     onTogglePanel: togglePanel,
+    panelElement: document.getElementById('panel'),
     loader: 'stl',
     basePath: PATIENT,
     scale: 1,
@@ -43,20 +45,20 @@
     // Outer, translucent tissues get a higher renderOrder so the bony core is
     // drawn first and stays legible through them.
     segments: [
-      { key: 'bone',   name: 'Bone',          color: '#ebebe0', opacity: 1.0, renderOrder: 0, smooth: 2,
-        files: ['_spine_thoracic.stl', '_spine_lumbar.stl', '_sacrum.stl'] },
-      { key: 'discs',  name: 'Discs',         color: '#99e6ff', opacity: 1.0, renderOrder: 1, smooth: 2,
-        files: ['_discs.stl'] },
-      { key: 'cord',   name: 'Spinal cord',   color: '#b3ffd9', opacity: 1.0, renderOrder: 1, smooth: 2,
-        files: ['_spinal_cord.stl'] },
-      { key: 'cavity', name: 'Spinal cavity', color: '#ddccff', opacity: 0.4, renderOrder: 2, smooth: 2,
-        files: ['_spinal_cavity.stl'] },
-      { key: 'blood',  name: 'Blood vessels', color: '#ff3333', opacity: 0.55, renderOrder: 3, smooth: 2,
-        files: ['_blood_vessels.stl'] },
-      { key: 'muscle', name: 'Muscle',        color: '#ffccf2', opacity: 0.2, renderOrder: 4, smooth: 2,
-        files: ['_muscle.stl'] },
-      { key: 'fat',    name: 'Fat',           color: '#ffeecc', opacity: 0.15, renderOrder: 5, smooth: 2,
-        files: ['_sct.stl', '_epidural_fat_1.stl', '_epidural_fat_2.stl', '_intramuscular_fat.stl', '_retro_fat.stl'] }
+      { key: 'bone',   name: 'Bone',          color: '#f1ebdc', opacity: 1.0, renderOrder: 0, smooth: 2,
+        files: ['spine_thoracic.stl', 'spine_lumbar.stl', 'sacrum.stl'] },
+      { key: 'discs',  name: 'Discs',         color: '#4fc3f7', opacity: 1.0, renderOrder: 1, smooth: 2,
+        files: ['discs.stl'] },
+      { key: 'cord',   name: 'Spinal cord',   color: '#4fe0a3', opacity: 1.0, renderOrder: 1, smooth: 2,
+        files: ['spinal_cord.stl'] },
+      { key: 'cavity', name: 'Spinal cavity', color: '#b388ff', opacity: 0.6, renderOrder: 2, smooth: 2,
+        files: ['spinal_cavity.stl'] },
+      { key: 'blood',  name: 'Blood vessels', color: '#e53935', opacity: 0.9, renderOrder: 3, smooth: 2,
+        files: ['blood_vessels.stl'] },
+      { key: 'muscle', name: 'Muscle',        color: '#e08a9b', opacity: 0.28, renderOrder: 4, smooth: 2,
+        files: ['muscle.stl'] },
+      { key: 'fat',    name: 'Fat',           color: '#f2cc7a', opacity: 0.22, renderOrder: 5, smooth: 2,
+        files: ['sct.stl', 'epidural_fat_1.stl', 'epidural_fat_2.stl', 'intramuscular_fat.stl', 'retro_fat.stl'] }
     ],
 
     infoTitle: 'Dataset',
