@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <title>3D MI Reports</title>
+  <script src="assets/i18n.js"></script>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Interactive 3D medical-imaging reports and population statistics dashboards by the Biomedical Imaging & AI group (Fisabio · Generalitat Valenciana)." />
   <link rel="stylesheet" href="assets/theme.css" />
@@ -16,6 +17,7 @@
       padding-block: 22px 8px;
     }
     .top .brand-bar img { height: 44px; }
+    .top .right { display: flex; align-items: center; gap: 10px; }
     .top .gh {
       color: var(--fg-muted); text-decoration: none; font-size: 12px;
       display: inline-flex; align-items: center; gap: 6px;
@@ -102,17 +104,20 @@
       <div class="brand-bar">
         <img src="assets/logos-white.png" alt="Generalitat Valenciana · Fundació Fisabio · Imagen Biomédica e IA" />
       </div>
+      <div class="right">
+      <div id="lang-switch"></div>
       <a class="gh" href="https://github.com/BIMCV-CSUSP/3D-MI-Reports" target="_blank" rel="noopener">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        Source
+        <span data-i18n="source">Código</span>
       </a>
+      </div>
     </header>
 
     <main class="wrap">
       <section class="hero">
-        <div class="eyebrow">Biomedical Imaging &amp; AI · Fisabio</div>
-        <h1>3D medical imaging reports, <em>in the browser</em>.</h1>
-        <p>Interactive prototypes for exploring segmented anatomy and population statistics directly from a link or a QR code — no software to install, works on phones and tablets.</p>
+        <div class="eyebrow">Imagen Biomédica e IA · Fisabio</div>
+        <h1 data-i18n="heroTitle">Informes 3D de imagen médica, <em>en tu navegador</em>.</h1>
+        <p data-i18n="heroText">Prototipos interactivos para explorar la anatomía segmentada y estadísticas de población desde un enlace o un código QR: sin instalar nada, en móviles y tabletas.</p>
       </section>
 
       <section class="grid" aria-label="Demos">
@@ -123,10 +128,10 @@
             </div>
             <span class="tag">three.js · VTK</span>
           </div>
-          <h2>Brain 3D Report</h2>
-          <p>Cortical surface with a segmented glial tumour and its peritumoural edema. Anatomical views, section planes, per-structure opacity and mesh volumes.</p>
-          <div class="meta"><span>Tumour 8.4 cm³</span><span>Edema 108 cm³</span><span>3 surfaces</span></div>
-          <span class="cta">Open viewer <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <h2 data-i18n="brainTitle">Informe 3D del cerebro</h2>
+          <p data-i18n="brainText">Superficie del cerebro con un tumor y el edema que lo rodea. Vistas anatómicas, cortes, transparencia por estructura y volúmenes.</p>
+          <div class="meta"><span data-i18n="brainMeta1">Tumor 8,4 cm³</span><span data-i18n="brainMeta2">Edema 108 cm³</span><span data-i18n="brainMeta3">3 superficies</span></div>
+          <span class="cta"><span data-i18n="open">Abrir visor</span> <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </a></article>
 
         <article class="card"><a class="card-link" href="spine-visualization/index.html">
@@ -136,10 +141,10 @@
             </div>
             <span class="tag">three.js · STL</span>
           </div>
-          <h2>Spine Segments Viewer</h2>
-          <p>Thoraco-lumbar MRI segmentation: vertebrae, discs, spinal cord and canal, vessels, muscle and fat compartments with visibility, opacity and colour controls.</p>
-          <div class="meta"><span>7 tissue groups</span><span>13 meshes</span><span>~100 MB</span></div>
-          <span class="cta">Open viewer <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <h2 data-i18n="spineTitle">Visor de columna</h2>
+          <p data-i18n="spineText">Columna segmentada a partir de resonancia magnética: vértebras, discos, médula y canal, vasos y músculos, con control de visibilidad, transparencia y color.</p>
+          <div class="meta"><span data-i18n="spineMeta1">6 tejidos</span><span data-i18n="spineMeta2">8 mallas</span><span>~48 MB</span></div>
+          <span class="cta"><span data-i18n="open">Abrir visor</span> <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </a></article>
 
         <article class="card"><a class="card-link" href="brain-statistics/free-surfer/index.html">
@@ -149,12 +154,12 @@
             </div>
             <span class="tag">d3.js</span>
           </div>
-          <h2>Brain Statistics · 10k</h2>
-          <p>Population dashboards of cortical area, volume and thickness with interactive filtering by sex, age and health department.</p>
+          <h2 data-i18n="statsTitle">Estadísticas del cerebro · 10k</h2>
+          <p data-i18n="statsText">Paneles de población con área, volumen y grosor cortical, filtrables por sexo, edad y departamento de salud.</p>
           <div class="meta"><span>FreeSurfer</span><span>VolBrain</span><span>CERES</span></div>
-          <span class="cta">Open FreeSurfer dashboard <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="cta"><span data-i18n="openStats">Abrir panel FreeSurfer</span> <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </a>
-          <div class="alt">Also:
+          <div class="alt"><span data-i18n="also">También:</span>
             <a href="brain-statistics/free-surfer/index_volbrain.html">VolBrain</a>
             <a href="brain-statistics/free-surfer/index_ceres.html">CERES</a>
           </div>
@@ -165,12 +170,47 @@
     <footer class="wrap">
       <div class="credits">
         Imagen Biomédica e IA · Fundació Fisabio · Generalitat Valenciana.<br/>
-        Originally developed at the Centre of Excellence and Technological Innovation in Bioimaging (CEIB). Static demo site — sample data only, no patient-identifying information.
+        <a href="assets/qr/print.html" data-i18n="qr">Códigos QR para imprimir</a> ·
+        <span data-i18n="credits">Desarrollado originalmente en el Centro de Excelencia e Innovación Tecnológica en Bioimagen (CEIB). Sitio de demostración: solo datos de ejemplo, sin información que identifique a pacientes.</span>
       </div>
       <div class="brand-bar">
         <img src="assets/logos-white.png" alt="Generalitat Valenciana · Fundació Fisabio · Imagen Biomédica e IA" />
       </div>
     </footer>
   </div>
+  <script>
+    (function () {
+      var DICT = {
+        source:     { es: 'Código', en: 'Source' },
+        heroTitle:  { es: 'Informes 3D de imagen médica, <em>en tu navegador</em>.', en: '3D medical imaging reports, <em>in the browser</em>.' },
+        heroText:   { es: 'Prototipos interactivos para explorar la anatomía segmentada y estadísticas de población desde un enlace o un código QR: sin instalar nada, en móviles y tabletas.',
+                      en: 'Interactive prototypes for exploring segmented anatomy and population statistics directly from a link or a QR code — no software to install, works on phones and tablets.' },
+        brainTitle: { es: 'Informe 3D del cerebro', en: 'Brain 3D Report' },
+        brainText:  { es: 'Superficie del cerebro con un tumor y el edema que lo rodea. Vistas anatómicas, cortes, transparencia por estructura y volúmenes.',
+                      en: 'Cortical surface with a segmented glial tumour and its peritumoural edema. Anatomical views, section planes, per-structure opacity and mesh volumes.' },
+        brainMeta1: { es: 'Tumor 8,4 cm³', en: 'Tumour 8.4 cm³' },
+        brainMeta2: { es: 'Edema 108 cm³', en: 'Edema 108 cm³' },
+        brainMeta3: { es: '3 superficies', en: '3 surfaces' },
+        spineTitle: { es: 'Visor de columna', en: 'Spine Segments Viewer' },
+        spineText:  { es: 'Columna segmentada a partir de resonancia magnética: vértebras, discos, médula y canal, vasos y músculos, con control de visibilidad, transparencia y color.',
+                      en: 'Thoraco-lumbar MRI segmentation: vertebrae, discs, spinal cord and canal, vessels and muscle with visibility, opacity and colour controls.' },
+        spineMeta1: { es: '6 tejidos', en: '6 tissue groups' },
+        spineMeta2: { es: '8 mallas', en: '8 meshes' },
+        statsTitle: { es: 'Estadísticas del cerebro · 10k', en: 'Brain Statistics · 10k' },
+        statsText:  { es: 'Paneles de población con área, volumen y grosor cortical, filtrables por sexo, edad y departamento de salud.',
+                      en: 'Population dashboards of cortical area, volume and thickness with interactive filtering by sex, age and health department.' },
+        open:       { es: 'Abrir visor', en: 'Open viewer' },
+        openStats:  { es: 'Abrir panel FreeSurfer', en: 'Open FreeSurfer dashboard' },
+        also:       { es: 'También:', en: 'Also:' },
+        qr:         { es: 'Códigos QR para imprimir', en: 'Printable QR codes' },
+        credits:    { es: 'Desarrollado originalmente en el Centro de Excelencia e Innovación Tecnológica en Bioimagen (CEIB). Sitio de demostración: solo datos de ejemplo, sin información que identifique a pacientes.',
+                      en: 'Originally developed at the Centre of Excellence and Technological Innovation in Bioimaging (CEIB). Static demo site — sample data only, no patient-identifying information.' }
+      };
+      function apply() { MI_LANG.apply(DICT); }
+      apply();
+      MI_LANG.onChange(apply);
+      MI_LANG.toggle(document.getElementById('lang-switch'));
+    })();
+  </script>
 </body>
 </html>

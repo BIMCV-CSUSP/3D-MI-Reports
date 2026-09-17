@@ -46,8 +46,20 @@ The two 3D viewers are thin configurations on top of a common engine, `assets/mi
 | Section plane | Sagittal / Coronal / Axial clipping with position slider and flip (`C`) |
 | Surface smoothing | Optional Taubin smoothing per structure — visual only, volumes are computed before smoothing |
 | Toolbar | Reset view (`R`), auto-rotate (`Space`), PNG screenshot, fullscreen (`F`) |
-| Loading | Progress overlay (files / bytes) — the spine case streams ~100 MB of STL |
+| Loading | Progress overlay (files / bytes) with retries — the spine case streams ~48 MB of STL |
 | Mobile | Panel becomes a bottom sheet, touch orbit/zoom/pan |
+
+### Languages
+
+Every page is bilingual (Spanish by default — the demos are shown to school groups — with an ES | EN switch).
+The choice is remembered in `localStorage`; `?lang=es` / `?lang=en` forces it (used by the printed QR codes).
+Panel strings live in `assets/mi-viewer.js` (`STRINGS`), page strings in each `app.js` / `index.html`.
+
+### Printable QR codes
+
+`assets/qr/print.html` is an A4 sheet with one branded QR card per viewer (spine in blue, brain in violet,
+group mark in the centre, error-correction level H). Regenerate the PNGs with `assets/qr/make_qr.py`
+(needs `pip install "qrcode[pil]"`) if the URLs change.
 
 ### Adding a new case / viewer
 

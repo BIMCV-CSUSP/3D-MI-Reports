@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 	<meta charset="utf-8"/>
-	<title>Spine Segments Viewer · 3D MI Reports</title>
+	<title>Visor de columna · 3D MI Reports</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<meta name="description" content="Interactive 3D viewer of a segmented lumbar-thoracic spine: bone, discs, spinal cord, muscle, fat and vessels.">
+	<meta name="description" content="Visor 3D interactivo de una columna vertebral segmentada: huesos, discos, médula, músculo y vasos sanguíneos.">
 	<link rel="stylesheet" href="../assets/theme.css">
 </head>
 <body class="viewer-body">
@@ -19,28 +19,29 @@
 	<div id="viewer"></div>
 
 	<header class="viewer-header">
-		<a class="home" href="../index.html" title="Back to the portal">
-			<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Portal
+		<a class="home" href="../index.html" data-i18n-title="portalTitle">
+			<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span data-i18n="portal">Portal</span>
 		</a>
 		<div class="viewer-title">
 			<span class="eyebrow">3D MI Reports</span>
-			<h1>Spine Segments Viewer</h1>
+			<h1 data-i18n="title">Visor de columna</h1>
 		</div>
+		<div id="lang-switch"></div>
 	</header>
 
-	<button id="panel-toggle" class="btn panel-toggle" type="button" aria-controls="panel" aria-expanded="true" hidden>Structures</button>
+	<button id="panel-toggle" class="btn panel-toggle" type="button" aria-controls="panel" aria-expanded="true" hidden></button>
 
-	<aside id="panel" class="panel" aria-label="Viewer controls">
+	<aside id="panel" class="panel" aria-label="Controls">
 		<div class="panel-head">
-			<h2>Controls</h2>
-			<button id="panel-close" class="btn" type="button" aria-label="Hide panel">Hide <kbd>H</kbd></button>
+			<h2 data-i18n="controls">Controles</h2>
+			<button id="panel-close" class="btn" type="button"><span data-i18n="hide">Ocultar</span> <kbd>H</kbd></button>
 		</div>
 		<div id="panel-body" class="panel-scroll"></div>
 	</aside>
 
-	<div id="toolbar" class="toolbar" role="toolbar" aria-label="Viewer actions"></div>
+	<div id="toolbar" class="toolbar" role="toolbar"></div>
 
-	<div class="hint">Drag to rotate · Scroll to zoom · Right-drag to pan · Click a structure to highlight · <kbd>1</kbd>–<kbd>6</kbd> views</div>
+	<div class="hint" data-i18n="hint"></div>
 
 	<footer class="viewer-footer">
 		<div class="brand-bar">
@@ -53,7 +54,7 @@
 	<div id="loading" class="loading" role="status" aria-live="polite">
 		<div class="loading-card">
 			<div class="spinner" aria-hidden="true"></div>
-			<div class="title">Loading spine segmentation</div>
+			<div class="title" data-i18n="loading">Cargando la columna…</div>
 			<div id="loading-status" class="status">…</div>
 			<div class="bar"><div id="loading-bar"></div></div>
 			<div id="loading-error" class="error"></div>
@@ -63,6 +64,7 @@
 	<script src="webgl/lib/three.js"></script>
 	<script src="webgl/lib/controls/OrbitControls.js"></script>
 	<script src="webgl/lib/STLLoader.js"></script>
+	<script src="../assets/i18n.js"></script>
 	<script src="../assets/mi-viewer.js"></script>
 	<script src="app.js"></script>
 </body>

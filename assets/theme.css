@@ -385,7 +385,7 @@ select.select:focus-visible { outline: 2px solid var(--brand-blue-hi); outline-o
 /* Segment rows */
 .seg-row {
   display: grid;
-  grid-template-columns: 15px 16px minmax(0, 1fr) 84px 22px;
+  grid-template-columns: 15px 16px minmax(0, 1fr) 76px 22px;
   align-items: center;
   gap: 8px;
   padding: 6px 6px;
@@ -470,6 +470,27 @@ select.select:focus-visible { outline: 2px solid var(--brand-blue-hi); outline-o
 }
 .pick-tip.show { opacity: 1; }
 .pick-tip .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+
+/* Language switch (ES | EN) */
+.lang-switch {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 2px;
+}
+.lang-btn {
+  appearance: none; border: none; background: transparent;
+  color: var(--fg-faint); font: 600 11px/1 var(--font); letter-spacing: .06em;
+  padding: 5px 9px; border-radius: 999px; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.lang-btn:hover { color: var(--fg); }
+.lang-btn.is-active { background: var(--brand-blue); color: #fff; }
+.lang-btn:focus-visible { outline: 2px solid var(--brand-blue-hi); outline-offset: 1px; }
+.viewer-header .lang-switch { margin-left: 4px; }
 
 /* Keyboard help */
 kbd {

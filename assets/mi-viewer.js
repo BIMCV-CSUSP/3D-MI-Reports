@@ -26,13 +26,51 @@
   'use strict';
 
   var PRESETS = [
-    { key: 'anterior',  label: 'Anterior',  hotkey: '1' },
-    { key: 'posterior', label: 'Posterior', hotkey: '2' },
-    { key: 'left',      label: 'Left',      hotkey: '3' },
-    { key: 'right',     label: 'Right',     hotkey: '4' },
-    { key: 'superior',  label: 'Superior',  hotkey: '5' },
-    { key: 'inferior',  label: 'Inferior',  hotkey: '6' }
+    { key: 'anterior',  label: { en: 'Front',  es: 'Frente'   }, hotkey: '1' },
+    { key: 'posterior', label: { en: 'Back',   es: 'Espalda'  }, hotkey: '2' },
+    { key: 'left',      label: { en: 'Left',   es: 'Izquierda' }, hotkey: '3' },
+    { key: 'right',     label: { en: 'Right',  es: 'Derecha'  }, hotkey: '4' },
+    { key: 'superior',  label: { en: 'Top',    es: 'Arriba'   }, hotkey: '5' },
+    { key: 'inferior',  label: { en: 'Bottom', es: 'Abajo'    }, hotkey: '6' }
   ];
+
+  /* UI strings (kid-friendly wording in Spanish). */
+  var STRINGS = {
+    structures:   { en: 'Structures',        es: 'Partes del cuerpo' },
+    showAll:      { en: 'Show all',          es: 'Ver todo' },
+    reset:        { en: 'Reset',             es: 'Reiniciar' },
+    resetTitle:   { en: 'Restore default colours, opacities and visibility', es: 'Vuelve a los colores y ajustes iniciales' },
+    rowTitle:     { en: 'Click to highlight · double-click to isolate', es: 'Clic para resaltar · doble clic para ver solo esta parte' },
+    show:         { en: 'Show',              es: 'Mostrar' },
+    colour:       { en: 'colour',            es: 'color' },
+    opacity:      { en: 'opacity',           es: 'transparencia' },
+    frame:        { en: 'Frame',             es: 'Acercar a' },
+    frameTitle:   { en: 'Frame this structure', es: 'Acercar la cámara a esta parte' },
+    view:         { en: 'View',              es: 'Punto de vista' },
+    viewOf:       { en: 'view',              es: 'vista' },
+    resetView:    { en: 'Reset view',        es: 'Vista inicial' },
+    autoRotate:   { en: 'Auto-rotate',       es: 'Girar solo' },
+    section:      { en: 'Section plane',     es: 'Cortar por la mitad' },
+    sectionOn:    { en: 'Enable section plane', es: 'Activar el corte' },
+    sectionAxis:  { en: 'Section plane orientation', es: 'Dirección del corte' },
+    sectionPos:   { en: 'Section plane position', es: 'Posición del corte' },
+    sagittal:     { en: 'Sagittal (side)',   es: 'De lado' },
+    coronal:      { en: 'Coronal (front)',   es: 'De frente' },
+    axial:        { en: 'Axial (top)',       es: 'Desde arriba' },
+    flip:         { en: 'Flip',              es: 'Dar la vuelta' },
+    flipTitle:    { en: 'Keep the other half', es: 'Quedarse con la otra mitad' },
+    about:        { en: 'About',             es: 'Sobre este caso' },
+    resetViewKey: { en: 'Reset view (R)',    es: 'Vista inicial (R)' },
+    rotateKey:    { en: 'Auto-rotate (Space)', es: 'Girar solo (Espacio)' },
+    screenshot:   { en: 'Save screenshot (PNG)', es: 'Guardar una foto (PNG)' },
+    fullscreen:   { en: 'Fullscreen (F)',    es: 'Pantalla completa (F)' },
+    files:        { en: 'files',             es: 'archivos' },
+    of:           { en: 'of',                es: 'de' },
+    retrying:     { en: 'Retrying',          es: 'Reintentando' },
+    loadError:    { en: 'Could not load',    es: 'No se pudo cargar' }
+  };
+  function tr(key) { return global.MI_LANG ? MI_LANG.t(STRINGS[key]) : STRINGS[key].en; }
+  function tv(value) { return global.MI_LANG ? MI_LANG.t(value) : (typeof value === 'string' ? value : value.en); }
 
   var ICONS = {
     focus: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>',
@@ -212,7 +250,7 @@
       if (Object.keys(bytesTotal).length < total) known = false;
       var frac = known && lt > 0 ? lb / lt : loaded / total;
       overlay.bar.style.width = Math.round(frac * 100) + '%';
-      overlay.status.textContent = loaded + ' / ' + total + ' files' + (lb ? ' · ' + fmtBytes(lb) + (known ? ' of ' + fmtBytes(lt) : '') : '');
+      overlay.status.textContent = loaded + ' / ' + total + ' ' + tr('files') + (lb ? ' · ' + fmtBytes(lb) + (known ? ' ' + tr('of') + ' ' + fmtBytes(lt) : '') : '');
     }
     function finishLoading() {
       if (!overlay) return;
@@ -277,7 +315,7 @@
         },
         function () {
           if (attempt < RETRIES) {
-            if (overlay) overlay.status.textContent = 'Retrying ' + file + ' (' + (attempt + 1) + '/' + RETRIES + ')…';
+            if (overlay) overlay.status.textContent = tr('retrying') + ' ' + file + ' (' + (attempt + 1) + '/' + RETRIES + ')…';
             setTimeout(function () { loadFile(seg, file, attempt + 1); }, 800 * attempt);
             return;
           }
@@ -285,7 +323,7 @@
           total--;                                   // let the rest of the scene finish
           if (overlay) {
             overlay.error.style.display = 'block';
-            overlay.error.textContent += (overlay.error.textContent ? ' · ' : '') + 'Could not load ' + file;
+            overlay.error.textContent += (overlay.error.textContent ? ' · ' : '') + tr('loadError') + ' ' + file;
           }
           updateLoading();
           if (loaded === total) onAllLoaded();
@@ -328,6 +366,7 @@
     }
 
     function applyFrame(frame, animate) {
+      if (!container.clientWidth || !container.clientHeight || !isFinite(frame.position.x)) { pendingFrame = true; return; }
       controls.minDistance = frame.radius * 0.15;
       controls.maxDistance = frame.radius * 12;
       camera.near = Math.max(0.05, frame.radius * 0.01);
@@ -424,7 +463,7 @@
       setSelected(seg);
       if (tip) {
         if (seg) {
-          tip.innerHTML = '<span class="dot" style="background:#' + seg.mat.color.getHexString() + '"></span>' + seg.name;
+          tip.innerHTML = '<span class="dot" style="background:#' + seg.mat.color.getHexString() + '"></span>' + tv(seg.name);
           tip.style.left = e.clientX + 'px'; tip.style.top = e.clientY + 'px';
           tip.classList.add('show');
           clearTimeout(tip._t); tip._t = setTimeout(function () { tip.classList.remove('show'); }, 1600);
@@ -433,8 +472,9 @@
     });
 
     /* ---------------- panel ---------------- */
-    var presetChips = {};
+    var presetChips = {}, activePreset = null;
     function setActivePreset(key) {
+      activePreset = key;
       Object.keys(presetChips).forEach(function (k) { presetChips[k].classList.toggle('is-active', k === key); });
     }
 
@@ -465,16 +505,16 @@
 
     function buildStructures() {
       var sec = el('div', 'section');
-      var head = el('div', 'section-title', '<span>Structures</span>');
+      var head = el('div', 'section-title', '<span>' + tr('structures') + '</span>');
       var actions = el('div', 'chip-row');
-      var showAll = el('button', 'btn', 'Show all');
+      var showAll = el('button', 'btn', tr('showAll'));
       showAll.type = 'button';
       showAll.addEventListener('click', function () {
         segments.forEach(function (s) { s.visible = true; applySegment(s); syncRow(s); });
       });
-      var reset = el('button', 'btn', 'Reset');
+      var reset = el('button', 'btn', tr('reset'));
       reset.type = 'button';
-      reset.title = 'Restore default colours, opacities and visibility';
+      reset.title = tr('resetTitle');
       reset.addEventListener('click', resetSegments);
       actions.appendChild(showAll); actions.appendChild(reset);
       head.appendChild(actions);
@@ -484,23 +524,24 @@
         var row = el('div', 'seg-row');
         row.tabIndex = 0;
         row.setAttribute('role', 'button');
-        row.title = 'Click to highlight · double-click to isolate';
+        row.title = tr('rowTitle');
+        var segName = tv(seg.name);
 
         var cb = el('input', 'check'); cb.type = 'checkbox'; cb.checked = seg.visible;
-        cb.setAttribute('aria-label', 'Show ' + seg.name);
+        cb.setAttribute('aria-label', tr('show') + ' ' + segName);
         cb.addEventListener('change', function () { seg.visible = cb.checked; applySegment(seg); });
         cb.addEventListener('click', function (e) { e.stopPropagation(); });
 
-        var sw = el('input', 'swatch'); sw.type = 'color'; sw.value = seg.defaults.color;
-        sw.setAttribute('aria-label', seg.name + ' colour');
+        var sw = el('input', 'swatch'); sw.type = 'color'; sw.value = '#' + seg.mat.color.getHexString();
+        sw.setAttribute('aria-label', segName + ' ' + tr('colour'));
         sw.addEventListener('input', function () { seg.mat.color.set(sw.value); });
         sw.addEventListener('click', function (e) { e.stopPropagation(); });
 
-        var name = el('div', 'seg-name', '<span class="n">' + seg.name + '</span>' + (cfg.showVolumes ? '<span class="v">…</span>' : ''));
+        var name = el('div', 'seg-name', '<span class="n">' + segName + '</span>' + (cfg.showVolumes ? '<span class="v">…</span>' : ''));
 
         var op = el('input', 'slider'); op.type = 'range'; op.min = 0; op.max = 1; op.step = 0.01; op.value = seg.mat.opacity;
         op.style.setProperty('--fill', Math.round(seg.mat.opacity * 100) + '%');
-        op.setAttribute('aria-label', seg.name + ' opacity');
+        op.setAttribute('aria-label', segName + ' ' + tr('opacity'));
         op.addEventListener('input', function () {
           seg.mat.opacity = parseFloat(op.value);
           op.style.setProperty('--fill', Math.round(seg.mat.opacity * 100) + '%');
@@ -509,8 +550,8 @@
         op.addEventListener('click', function (e) { e.stopPropagation(); });
         op.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
 
-        var fb = el('button', 'focus-btn', ICONS.focus); fb.type = 'button'; fb.title = 'Frame this structure';
-        fb.setAttribute('aria-label', 'Frame ' + seg.name);
+        var fb = el('button', 'focus-btn', ICONS.focus); fb.type = 'button'; fb.title = tr('frameTitle');
+        fb.setAttribute('aria-label', tr('frame') + ' ' + segName);
         fb.addEventListener('click', function (e) { e.stopPropagation(); focusSegment(seg); });
 
         row.appendChild(cb); row.appendChild(sw); row.appendChild(name); row.appendChild(op); row.appendChild(fb);
@@ -520,7 +561,10 @@
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelected(seg); }
         });
         seg.row = row;
+        row.classList.toggle('is-selected', selected === seg);
+        row.classList.toggle('is-hidden', !seg.visible);
         sec.appendChild(row);
+        renderSegmentVolume(seg);
       });
       return sec;
     }
@@ -545,11 +589,12 @@
 
     function buildView() {
       var sec = el('div', 'section');
-      sec.appendChild(el('div', 'section-title', '<span>View</span>'));
+      sec.appendChild(el('div', 'section-title', '<span>' + tr('view') + '</span>'));
       var chips = el('div', 'chip-row');
       PRESETS.forEach(function (p) {
-        var c = el('button', 'chip', p.label); c.type = 'button';
-        c.title = p.label + ' view (' + p.hotkey + ')';
+        var c = el('button', 'chip', tv(p.label)); c.type = 'button';
+        c.title = tv(p.label) + ' · ' + tr('viewOf') + ' ' + p.hotkey;
+        c.classList.toggle('is-active', activePreset === p.key);
         c.addEventListener('click', function () { goToView(p.key, true); });
         presetChips[p.key] = c;
         chips.appendChild(c);
@@ -557,10 +602,11 @@
       sec.appendChild(chips);
       var row = el('div', 'section-row');
       row.style.marginTop = '10px';
-      var reset = el('button', 'btn', ICONS.reset + 'Reset view'); reset.type = 'button';
+      var reset = el('button', 'btn', ICONS.reset + tr('resetView')); reset.type = 'button';
       reset.addEventListener('click', function () { goToView(cfg.defaultView || 'oblique', true); });
-      var rot = el('button', 'btn', ICONS.rotate + 'Auto-rotate'); rot.type = 'button';
-      rot.setAttribute('aria-pressed', 'false');
+      var rot = el('button', 'btn', ICONS.rotate + tr('autoRotate')); rot.type = 'button';
+      rot.setAttribute('aria-pressed', String(controls.autoRotate));
+      rot.classList.toggle('is-active', controls.autoRotate);
       rot.addEventListener('click', function () { toggleAutoRotate(); });
       row.appendChild(reset); row.appendChild(rot);
       sec.appendChild(row);
@@ -580,29 +626,32 @@
 
     function buildClip() {
       var sec = el('div', 'section');
-      var head = el('div', 'section-title', '<span>Section plane</span>');
-      var en = el('input', 'check'); en.type = 'checkbox'; en.setAttribute('aria-label', 'Enable section plane');
+      var head = el('div', 'section-title', '<span>' + tr('section') + '</span>');
+      var en = el('input', 'check'); en.type = 'checkbox'; en.checked = clip.enabled;
+      en.setAttribute('aria-label', tr('sectionOn'));
       en.addEventListener('change', function () { clip.enabled = en.checked; sec.classList.toggle('is-on', clip.enabled); updateClip(); });
       head.appendChild(en);
       sec.appendChild(head);
 
       var r1 = el('div', 'section-row');
       var sel = el('select', 'select');
-      [['sagittal', 'Sagittal'], ['coronal', 'Coronal'], ['axial', 'Axial']].forEach(function (o) {
-        var opt = document.createElement('option'); opt.value = o[0]; opt.textContent = o[1]; sel.appendChild(opt);
+      ['sagittal', 'coronal', 'axial'].forEach(function (k) {
+        var opt = document.createElement('option'); opt.value = k; opt.textContent = tr(k); sel.appendChild(opt);
       });
-      sel.setAttribute('aria-label', 'Section plane orientation');
+      sel.value = clip.axis;
+      sel.setAttribute('aria-label', tr('sectionAxis'));
       sel.addEventListener('change', function () { clip.axis = sel.value; updateClip(); });
-      var flip = el('button', 'btn', 'Flip'); flip.type = 'button'; flip.title = 'Keep the other half';
+      var flip = el('button', 'btn', tr('flip')); flip.type = 'button'; flip.title = tr('flipTitle');
+      flip.classList.toggle('is-active', clip.flip);
       flip.addEventListener('click', function () { clip.flip = !clip.flip; flip.classList.toggle('is-active', clip.flip); updateClip(); });
       r1.appendChild(sel); r1.appendChild(flip);
       sec.appendChild(r1);
 
       var r2 = el('div', 'section-row');
       var sl = el('input', 'slider grow'); sl.type = 'range'; sl.min = 0; sl.max = 1; sl.step = 0.005; sl.value = clip.t;
-      sl.style.setProperty('--fill', '50%');
-      sl.setAttribute('aria-label', 'Section plane position');
-      var val = el('span', 'value', '50 %');
+      sl.style.setProperty('--fill', Math.round(clip.t * 100) + '%');
+      sl.setAttribute('aria-label', tr('sectionPos'));
+      var val = el('span', 'value', Math.round(clip.t * 100) + ' %');
       sl.addEventListener('input', function () {
         clip.t = parseFloat(sl.value);
         sl.style.setProperty('--fill', Math.round(clip.t * 100) + '%');
@@ -619,8 +668,8 @@
     function buildInfo() {
       if (!cfg.info) return null;
       var sec = el('div', 'section');
-      sec.appendChild(el('div', 'section-title', '<span>' + (cfg.infoTitle || 'About') + '</span>'));
-      var body = el('div', 'info-body', cfg.info);
+      sec.appendChild(el('div', 'section-title', '<span>' + (cfg.infoTitle ? tv(cfg.infoTitle) : tr('about')) + '</span>'));
+      var body = el('div', 'info-body', tv(cfg.info));
       body.style.cssText = 'font-size:12px;line-height:1.5;color:var(--fg-muted)';
       sec.appendChild(body);
       return sec;
@@ -641,15 +690,17 @@
     function buildToolbar() {
       var tb = cfg.toolbar;
       if (!tb) return;
+      tb.innerHTML = '';
       function b(icon, title, fn) {
         var x = el('button', 'btn icon', icon); x.type = 'button'; x.title = title; x.setAttribute('aria-label', title);
         x.addEventListener('click', fn); tb.appendChild(x); return x;
       }
-      b(ICONS.reset, 'Reset view (R)', function () { goToView(cfg.defaultView || 'oblique', true); });
-      toolbarUI.rotate = b(ICONS.rotate, 'Auto-rotate (Space)', function () { toggleAutoRotate(); });
-      b(ICONS.camera, 'Save screenshot (PNG)', screenshot);
+      b(ICONS.reset, tr('resetViewKey'), function () { goToView(cfg.defaultView || 'oblique', true); });
+      toolbarUI.rotate = b(ICONS.rotate, tr('rotateKey'), function () { toggleAutoRotate(); });
+      toolbarUI.rotate.classList.toggle('is-active', controls.autoRotate);
+      b(ICONS.camera, tr('screenshot'), screenshot);
       if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
-        b(ICONS.fullscreen, 'Fullscreen (F)', toggleFullscreen);
+        b(ICONS.fullscreen, tr('fullscreen'), toggleFullscreen);
       }
     }
 
@@ -694,11 +745,14 @@
     });
 
     /* ---------------- resize / loop ---------------- */
+    var pendingFrame = false;   // frame requested while the canvas had no size
     function resize() {
       var w = container.clientWidth, h = container.clientHeight;
+      if (!w || !h) return;                        // hidden tab / collapsed pane
       renderer.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      if (pendingFrame && !bounds.isEmpty()) { pendingFrame = false; goToView(cfg.defaultView || 'oblique', false); }
     }
 
     /* On narrow screens the panel is a bottom sheet: shrink the canvas to the
@@ -734,6 +788,7 @@
     /* ---------------- boot ---------------- */
     buildPanel();
     buildToolbar();
+    if (global.MI_LANG) MI_LANG.onChange(function () { buildPanel(); buildToolbar(); });
     loadAll();
     requestAnimationFrame(tick);
 
@@ -764,7 +819,9 @@
       sync();
       if (typeof opts.onChange === 'function') opts.onChange(collapse);
     }
-    open.innerHTML = ICONS.menu + (opts.label || 'Controls');
+    function label() { open.innerHTML = ICONS.menu + tv(opts.label || STRINGS.structures); }
+    label();
+    if (global.MI_LANG) MI_LANG.onChange(label);
     open.addEventListener('click', function () { toggle(false); });
     close.addEventListener('click', function () { toggle(true); });
     if (window.innerWidth < 820) toggle(true);
