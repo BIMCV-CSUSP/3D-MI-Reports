@@ -58,8 +58,9 @@ Panel strings live in `assets/mi-viewer.js` (`STRINGS`), page strings in each `a
 ### Printable QR codes
 
 `assets/qr/print.html` is an A4 sheet with one branded QR card per viewer (spine in blue, brain in violet,
-group mark in the centre, error-correction level H). Regenerate the PNGs with `assets/qr/make_qr.py`
-(needs `pip install "qrcode[pil]"`) if the URLs change.
+anatomy icon in the centre, error-correction level H). `card-spine.png` / `card-brain.png` are the same cards
+as stand-alone A6 images at 300 dpi for printing separately; `qr-*.png` are the bare codes. Regenerate them
+with `assets/qr/make_qr.py` (needs `pip install "qrcode[pil]"`) if the URLs change.
 
 ### Adding a new case / viewer
 

@@ -26,6 +26,9 @@
       font: 600 13px/1 var(--font); padding: 9px 14px; border-radius: 8px; cursor: pointer;
     }
     .toolbar button:hover { filter: brightness(1.1); }
+    .toolbar .sep { color: #c9c4d6; }
+    .toolbar a.dl { color: var(--blue); font-weight: 600; text-decoration: none; border-bottom: 1px solid currentColor; }
+    .toolbar { flex-wrap: wrap; }
 
     .sheet {
       width: 210mm; min-height: 297mm; margin: 16px auto; padding: 14mm 14mm 12mm;
@@ -70,8 +73,14 @@
 </head>
 <body>
   <div class="toolbar">
-    Hoja lista para imprimir en A4 · 2 tarjetas por página
+    Hoja A4 · 2 tarjetas por página
     <button type="button" onclick="window.print()">Imprimir / Guardar PDF</button>
+    <span class="sep">·</span> Tarjetas sueltas (A6, 300 dpi):
+    <a class="dl" href="card-spine.png" download>columna</a>
+    <a class="dl" href="card-brain.png" download>cerebro</a>
+    <span class="sep">·</span> Solo el código:
+    <a class="dl" href="qr-spine.png" download>columna</a>
+    <a class="dl" href="qr-brain.png" download>cerebro</a>
   </div>
 
   <main class="sheet">
